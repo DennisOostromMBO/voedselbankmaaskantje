@@ -1,0 +1,111 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class ContactSeeder extends Seeder
+{
+    public function run(): void
+    {
+        DB::table('contacts')->insert([
+            [
+                'family_id' => 1,
+                'customer_id' => 1,
+                'supplier_id' => 1,
+                'street' => 'Main Street',
+                'postcode' => '1234AB',
+                'house_number' => '10',
+                'addition' => null,
+                'city' => 'Springfield',
+                'mobile' => '0612345678',
+                'email' => 'john.smith@example.com',
+                'is_active' => true,
+                'note' => 'First contact',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'family_id' => 2,
+                'customer_id' => 2,
+                'supplier_id' => 2,
+                'street' => 'Second Ave',
+                'postcode' => '5678CD',
+                'house_number' => '22',
+                'addition' => 'A',
+                'city' => 'Shelbyville',
+                'mobile' => '0687654321',
+                'email' => 'jane.johnson@example.com',
+                'is_active' => true,
+                'note' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'family_id' => 3,
+                'customer_id' => 3,
+                'supplier_id' => 3,
+                'street' => 'Baker Street',
+                'postcode' => '2345BC',
+                'house_number' => '5',
+                'addition' => null,
+                'city' => 'London',
+                'mobile' => '0611122233',
+                'email' => 'peter.brown@example.com',
+                'is_active' => true,
+                'note' => 'Bakery contact',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'family_id' => 4,
+                'customer_id' => 4,
+                'supplier_id' => 4,
+                'street' => 'Veggie Lane',
+                'postcode' => '3456DE',
+                'house_number' => '8',
+                'addition' => null,
+                'city' => 'Greenville',
+                'mobile' => '0622233344',
+                'email' => 'linda.white@example.com',
+                'is_active' => true,
+                'note' => 'Vegetable supplier contact',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'family_id' => 5,
+                'customer_id' => 5,
+                'supplier_id' => 5,
+                'street' => 'Meat Road',
+                'postcode' => '4567EF',
+                'house_number' => '12',
+                'addition' => null,
+                'city' => 'Meatville',
+                'mobile' => '0633344455',
+                'email' => 'mark.davis@example.com',
+                'is_active' => true,
+                'note' => 'Meat supplier contact',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'family_id' => 6,
+                'customer_id' => 6,
+                'supplier_id' => 6,
+                'street' => 'Fruit Street',
+                'postcode' => '5678FG',
+                'house_number' => '3',
+                'addition' => null,
+                'city' => 'Fruitcity',
+                'mobile' => '0644455566',
+                'email' => 'emily.clark@example.com',
+                'is_active' => true,
+                'note' => 'Fruit supplier contact',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+    }
+}
