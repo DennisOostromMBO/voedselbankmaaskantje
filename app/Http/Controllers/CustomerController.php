@@ -15,6 +15,20 @@ class CustomerController extends Controller
         try {
             $customers = Customer::getAllFromSP();
 
+            // Filter op zoekterm (naam, familienaam, e-mail, mobiel)
+            $search = $request->input('search');
+            if ($search) {
+                $searchLower = mb_strtolower($search);
+                $customers = array_filter($customers, function ($customer) use ($searchLower) {
+                    return
+                        (isset($customer->full_name) && mb_stripos($customer->full_name, $searchLower) !== false) ||
+                        (isset($customer->family_name) && mb_stripos($customer->family_name, $searchLower) !== false) ||
+                        (isset($customer->email) && mb_stripos($customer->email, $searchLower) !== false) ||
+                        (isset($customer->mobile) && mb_stripos($customer->mobile, $searchLower) !== false);
+                });
+                $customers = array_values($customers); // Re-index array after filter
+            }
+
             // Bepaal welke klanten gekoppeld zijn aan een voedselpakket
             $idsWithParcel = DB::table('food_parcels')->pluck('customer_id')->toArray();
             foreach ($customers as $customer) {
