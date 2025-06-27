@@ -13,10 +13,10 @@ use Illuminate\Validation\ValidationException;
 
 /**
  * Food Parcel Controller
- * 
+ *
  * Handles CRUD operations for food parcels with proper error handling,
  * validation, and responsive design support.
- * 
+ *
  * @author Wassim
  * @version 1.0
  */
@@ -24,7 +24,7 @@ class FoodParcelController extends Controller
 {
     /**
      * Display a listing of food parcels with filtering and search.
-     * 
+     *
      * @param Request $request
      * @return View
      */
@@ -62,18 +62,18 @@ class FoodParcelController extends Controller
 
             return view('food-parcels.index', compact(
                 'foodParcels',
-                'statistics', 
+                'statistics',
                 'customers',
                 'filters'
             ));
         } catch (\Exception $e) {
             Log::error('Error loading food parcels index: ' . $e->getMessage());
-            
+
             return view('food-parcels.index', [
                 'foodParcels' => collect([]),
                 'statistics' => (object)[
                     'total' => 0,
-                    'active' => 0, 
+                    'active' => 0,
                     'inactive' => 0,
                     'this_month' => 0
                 ],
@@ -85,7 +85,7 @@ class FoodParcelController extends Controller
 
     /**
      * Show the form for creating a new food parcel.
-     * 
+     *
      * @return View|RedirectResponse
      */
     public function create()
@@ -121,7 +121,7 @@ class FoodParcelController extends Controller
             return view('food-parcels.create', compact('customers', 'stocks'));
         } catch (\Exception $e) {
             Log::error('Error loading food parcel create form: ' . $e->getMessage());
-            
+
             return redirect()->route('food-parcels.index')
                 ->with('error', 'Failed to load create form. Please try again.');
         }
@@ -129,7 +129,7 @@ class FoodParcelController extends Controller
 
     /**
      * Store a newly created food parcel.
-     * 
+     *
      * @param Request $request
      * @return RedirectResponse
      */
@@ -155,7 +155,7 @@ class FoodParcelController extends Controller
                 ->withInput();
         } catch (\Exception $e) {
             Log::error('Error creating food parcel: ' . $e->getMessage());
-            
+
             return redirect()->back()
                 ->with('error', 'Failed to create food parcel. Please try again.')
                 ->withInput();
@@ -164,7 +164,7 @@ class FoodParcelController extends Controller
 
     /**
      * Display the specified food parcel.
-     * 
+     *
      * @param int $id
      * @return View|RedirectResponse
      */
@@ -182,7 +182,7 @@ class FoodParcelController extends Controller
             return view('food-parcels.show', compact('foodParcel'));
         } catch (\Exception $e) {
             Log::error('Error showing food parcel: ' . $e->getMessage());
-            
+
             return redirect()->route('food-parcels.index')
                 ->with('error', 'Failed to load food parcel details. Please try again.');
         }
@@ -190,7 +190,7 @@ class FoodParcelController extends Controller
 
     /**
      * Show the form for editing the specified food parcel.
-     * 
+     *
      * @param int $id
      * @return View|RedirectResponse
      */
@@ -231,7 +231,7 @@ class FoodParcelController extends Controller
             return view('food-parcels.edit', compact('foodParcel', 'customers', 'stocks'));
         } catch (\Exception $e) {
             Log::error('Error loading food parcel edit form: ' . $e->getMessage());
-            
+
             return redirect()->route('food-parcels.index')
                 ->with('error', 'Failed to load edit form. Please try again.');
         }
@@ -239,7 +239,7 @@ class FoodParcelController extends Controller
 
     /**
      * Update the specified food parcel.
-     * 
+     *
      * @param Request $request
      * @param int $id
      * @return RedirectResponse
@@ -266,7 +266,7 @@ class FoodParcelController extends Controller
                 ->withInput();
         } catch (\Exception $e) {
             Log::error('Error updating food parcel: ' . $e->getMessage());
-            
+
             return redirect()->back()
                 ->with('error', 'Failed to update food parcel. Please try again.')
                 ->withInput();
@@ -275,7 +275,7 @@ class FoodParcelController extends Controller
 
     /**
      * Remove the specified food parcel.
-     * 
+     *
      * @param int $id
      * @return RedirectResponse
      */
@@ -289,7 +289,7 @@ class FoodParcelController extends Controller
                 ->with('success', 'Food parcel deleted successfully!');
         } catch (\Exception $e) {
             Log::error('Error deleting food parcel: ' . $e->getMessage());
-            
+
             return redirect()->route('food-parcels.index')
                 ->with('error', 'Failed to delete food parcel. Please try again.');
         }
@@ -297,7 +297,7 @@ class FoodParcelController extends Controller
 
     /**
      * Export food parcels to CSV format.
-     * 
+     *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
@@ -326,7 +326,7 @@ class FoodParcelController extends Controller
 
             $callback = function () use ($foodParcels) {
                 $file = fopen('php://output', 'w');
-                
+
                 // CSV Headers
                 fputcsv($file, [
                     'ID',
@@ -351,7 +351,7 @@ class FoodParcelController extends Controller
                         $parcel->category_name ?? 'N/A',
                         $parcel->stock_quantity ?? 0,
                         $parcel->is_active ? 'Active' : 'Inactive',
-                        $parcel->stock_expiry_date ? 
+                        $parcel->stock_expiry_date ?
                             \Carbon\Carbon::parse($parcel->stock_expiry_date)->format('Y-m-d') : 'N/A',
                         $parcel->note ?? '',
                         \Carbon\Carbon::parse($parcel->created_at)->format('Y-m-d H:i:s')
@@ -364,7 +364,7 @@ class FoodParcelController extends Controller
             return response()->stream($callback, 200, $headers);
         } catch (\Exception $e) {
             Log::error('Error exporting food parcels to CSV: ' . $e->getMessage());
-            
+
             return redirect()->route('food-parcels.index')
                 ->with('error', 'Failed to export data. Please try again.');
         }
@@ -372,7 +372,7 @@ class FoodParcelController extends Controller
 
     /**
      * Export food parcels to PDF format.
-     * 
+     *
      * @param Request $request
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
@@ -398,7 +398,7 @@ class FoodParcelController extends Controller
             return view('food-parcels.export-pdf', compact('foodParcels', 'statistics'));
         } catch (\Exception $e) {
             Log::error('Error exporting food parcels to PDF: ' . $e->getMessage());
-            
+
             return redirect()->route('food-parcels.index')
                 ->with('error', 'Failed to export PDF. Please try again.');
         }
@@ -406,7 +406,7 @@ class FoodParcelController extends Controller
 
     /**
      * Bulk delete food parcels.
-     * 
+     *
      * @param Request $request
      * @return RedirectResponse
      */
@@ -439,7 +439,7 @@ class FoodParcelController extends Controller
             }
         } catch (\Exception $e) {
             Log::error('Error in bulk delete: ' . $e->getMessage());
-            
+
             return redirect()->route('food-parcels.index')
                 ->with('error', 'Failed to delete selected food parcels. Please try again.');
         }
@@ -447,7 +447,7 @@ class FoodParcelController extends Controller
 
     /**
      * Bulk update status of food parcels.
-     * 
+     *
      * @param Request $request
      * @return RedirectResponse
      */
@@ -468,7 +468,7 @@ class FoodParcelController extends Controller
                 try {
                     // Get current food parcel data
                     $currentParcel = FoodParcel::findOrFail($id);
-                    
+
                     // Update with new status
                     FoodParcel::updateWithSP($id, [
                         'stock_id' => $currentParcel->stock_id,
@@ -476,7 +476,7 @@ class FoodParcelController extends Controller
                         'is_active' => $newStatus,
                         'note' => $currentParcel->note
                     ]);
-                    
+
                     $updatedCount++;
                 } catch (\Exception $e) {
                     Log::warning("Failed to update food parcel ID {$id}: " . $e->getMessage());
@@ -493,7 +493,7 @@ class FoodParcelController extends Controller
             }
         } catch (\Exception $e) {
             Log::error('Error in bulk status update: ' . $e->getMessage());
-            
+
             return redirect()->route('food-parcels.index')
                 ->with('error', 'Failed to update selected food parcels. Please try again.');
         }
@@ -501,7 +501,7 @@ class FoodParcelController extends Controller
 
     /**
      * API endpoint - Get food parcels as JSON.
-     * 
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -532,7 +532,7 @@ class FoodParcelController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error in API food parcels index: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to retrieve food parcels',
@@ -543,7 +543,7 @@ class FoodParcelController extends Controller
 
     /**
      * API endpoint - Get single food parcel as JSON.
-     * 
+     *
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -566,7 +566,7 @@ class FoodParcelController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error in API food parcel show: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to retrieve food parcel',

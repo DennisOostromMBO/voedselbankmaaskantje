@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * Family Factory
- * 
+ *
  * Factory for generating test family data.
  */
 class FamilyFactory extends Factory

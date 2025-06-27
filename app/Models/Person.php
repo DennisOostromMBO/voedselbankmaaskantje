@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Person Model
- * 
+ *
  * Represents a person entity in the food bank system.
  * A person can have multiple families.
  */

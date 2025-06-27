@@ -13,36 +13,36 @@
             margin: 0;
             padding: 20px;
         }
-        
+
         .header {
             text-align: center;
             margin-bottom: 30px;
             border-bottom: 2px solid #3B82F6;
             padding-bottom: 20px;
         }
-        
+
         .header h1 {
             margin: 0;
             color: #1E40AF;
             font-size: 24px;
         }
-        
+
         .header p {
             margin: 5px 0 0 0;
             color: #6B7280;
             font-size: 14px;
         }
-        
+
         .statistics {
             display: table;
             width: 100%;
             margin-bottom: 30px;
         }
-        
+
         .stat-row {
             display: table-row;
         }
-        
+
         .stat-cell {
             display: table-cell;
             width: 25%;
@@ -51,37 +51,37 @@
             background: #F3F4F6;
             border: 1px solid #E5E7EB;
         }
-        
+
         .stat-value {
             font-size: 20px;
             font-weight: bold;
             color: #1E40AF;
             margin-bottom: 5px;
         }
-        
+
         .stat-label {
             font-size: 11px;
             color: #6B7280;
             text-transform: uppercase;
         }
-        
+
         .table-container {
             margin-bottom: 30px;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
-        
+
         th, td {
             border: 1px solid #E5E7EB;
             padding: 8px;
             text-align: left;
             vertical-align: top;
         }
-        
+
         th {
             background: #F9FAFB;
             font-weight: bold;
@@ -89,31 +89,31 @@
             font-size: 11px;
             text-transform: uppercase;
         }
-        
+
         td {
             font-size: 10px;
         }
-        
+
         .status-active {
             color: #059669;
             font-weight: bold;
         }
-        
+
         .status-inactive {
             color: #DC2626;
             font-weight: bold;
         }
-        
+
         .expiry-warning {
             color: #D97706;
             font-weight: bold;
         }
-        
+
         .expiry-danger {
             color: #DC2626;
             font-weight: bold;
         }
-        
+
         .footer {
             margin-top: 30px;
             padding-top: 20px;
@@ -122,26 +122,26 @@
             font-size: 10px;
             color: #6B7280;
         }
-        
+
         .page-break {
             page-break-after: always;
         }
-        
+
         @media print {
             body {
                 margin: 0;
                 padding: 15px;
             }
-            
+
             .header {
                 margin-bottom: 20px;
             }
-            
+
             .no-print {
                 display: none;
             }
         }
-        
+
         .no-data {
             text-align: center;
             padding: 40px;
@@ -234,7 +234,7 @@
                                         $isExpired = $expiryDate->isPast();
                                         $isExpiringSoon = $expiryDate->diffInDays() <= 7 && !$isExpired;
                                     @endphp
-                                    
+
                                     <span class="@if($isExpired) expiry-danger @elseif($isExpiringSoon) expiry-warning @endif">
                                         {{ $expiryDate->format('M d, Y') }}
                                     </span>
@@ -257,19 +257,19 @@
     <!-- Additional Details Section -->
     @if($foodParcels && $foodParcels->count() > 0)
         <div class="page-break"></div>
-        
+
         <div class="header">
             <h1>Detailed Food Parcels Information</h1>
         </div>
-        
+
         @foreach($foodParcels as $index => $parcel)
             @if($index > 0 && $index % 5 == 0)
                 <div class="page-break"></div>
             @endif
-            
+
             <div style="margin-bottom: 25px; border: 1px solid #E5E7EB; padding: 15px; border-radius: 5px;">
                 <h3 style="margin: 0 0 10px 0; color: #1E40AF;">Food Parcel #{{ $parcel->id }}</h3>
-                
+
                 <table style="width: 100%; margin: 0;">
                     <tr>
                         <td style="width: 30%; border: none; padding: 5px 10px 5px 0;"><strong>Customer:</strong></td>

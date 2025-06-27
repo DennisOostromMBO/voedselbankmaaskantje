@@ -11,13 +11,13 @@ use Illuminate\Support\Collection;
 
 /**
  * Food Parcel Model
- * 
+ *
  * Handles food parcel data and relationships with customers and stocks.
  * Includes stored procedures for complex queries with joins.
- * 
+ *
  * @property int $id
  * @property int $stock_id
- * @property int $customer_id 
+ * @property int $customer_id
  * @property bool $is_active
  * @property string|null $note
  * @property \Carbon\Carbon $created_at
@@ -32,7 +32,7 @@ class FoodParcel extends Model
      */
     protected $fillable = [
         'stock_id',
-        'customer_id', 
+        'customer_id',
         'is_active',
         'note'
     ];
@@ -64,7 +64,7 @@ class FoodParcel extends Model
 
     /**
      * Get all food parcels with customer and stock details using stored procedure.
-     * 
+     *
      * @param array $filters Optional filters (customer_id, is_active, search)
      * @return Collection
      */
@@ -90,7 +90,7 @@ class FoodParcel extends Model
 
     /**
      * Get food parcel details by ID using stored procedure.
-     * 
+     *
      * @param int $id
      * @return object|null
      */
@@ -107,7 +107,7 @@ class FoodParcel extends Model
 
     /**
      * Create food parcel using stored procedure.
-     * 
+     *
      * @param array $data
      * @return bool
      */
@@ -130,7 +130,7 @@ class FoodParcel extends Model
 
     /**
      * Update food parcel using stored procedure.
-     * 
+     *
      * @param int $id
      * @param array $data
      * @return bool
@@ -155,7 +155,7 @@ class FoodParcel extends Model
 
     /**
      * Delete food parcel using stored procedure.
-     * 
+     *
      * @param int $id
      * @return bool
      */
@@ -172,7 +172,7 @@ class FoodParcel extends Model
 
     /**
      * Get food parcel statistics using stored procedure.
-     * 
+     *
      * @return object
      */
     public static function getStatistics(): object

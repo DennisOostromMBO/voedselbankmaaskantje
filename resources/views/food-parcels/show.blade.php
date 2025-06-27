@@ -64,7 +64,7 @@
                         <label class="detail-label">Parcel ID</label>
                         <div class="detail-value">#{{ $foodParcel->id }}</div>
                     </div>
-                    
+
                     <div class="detail-item">
                         <label class="detail-label">Status</label>
                         <div class="detail-value">
@@ -131,7 +131,7 @@
                         <label class="detail-label">Customer ID</label>
                         <div class="detail-value">#{{ $foodParcel->customer_id }}</div>
                     </div>
-                    
+
                     <div class="detail-item">
                         <label class="detail-label">Customer Name</label>
                         <div class="detail-value">
@@ -180,7 +180,7 @@
                         <label class="detail-label">Stock ID</label>
                         <div class="detail-value">#{{ $foodParcel->stock_id }}</div>
                     </div>
-                    
+
                     <div class="detail-item">
                         <label class="detail-label">Product Name</label>
                         <div class="detail-value">
@@ -241,12 +241,12 @@
                     <i class="fas fa-edit"></i>
                     Edit Food Parcel
                 </a>
-                
+
                 <button type="button" class="btn btn-danger btn-lg" onclick="confirmDelete({{ $foodParcel->id }})">
                     <i class="fas fa-trash"></i>
                     Delete Food Parcel
                 </button>
-                
+
                 <a href="{{ route('food-parcels.index') }}" class="btn btn-secondary btn-lg">
                     <i class="fas fa-arrow-left"></i>
                     Back to List
@@ -405,20 +405,20 @@
     .content-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .detail-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .action-buttons-main {
         flex-direction: column;
     }
-    
+
     .btn-group {
         flex-direction: column;
         width: 100%;
     }
-    
+
     .btn-text {
         display: inline;
     }
@@ -430,7 +430,7 @@
         gap: 1rem;
         align-items: flex-start;
     }
-    
+
     .btn-group {
         width: 100%;
     }
@@ -446,7 +446,7 @@
 function confirmDelete(id) {
     const modal = document.getElementById('deleteModal');
     modal.style.display = 'block';
-    
+
     // Update form action
     const form = document.getElementById('deleteForm');
     form.action = `{{ route('food-parcels.destroy', '') }}/${id}`;

@@ -9,10 +9,10 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * Food Parcel Model Factory
- * 
+ *
  * Generates fake data for food parcels for testing and seeding.
  * Follows PSR-12 standards and provides realistic test data.
- * 
+ *
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\FoodParcel>
  * @author Wassim
  * @version 1.0

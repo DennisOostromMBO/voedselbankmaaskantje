@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Customer;
+use App\Models\Family;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -32,15 +33,10 @@ class CustomerFactory extends Factory
     public function definition(): array
     {
         return [
-            'first_name' => $this->faker->firstName(),
-            'last_name' => $this->faker->lastName(),
-            'email' => $this->faker->unique()->safeEmail(),
-            'phone' => $this->faker->phoneNumber(),
-            'address' => $this->faker->streetAddress(),
-            'city' => $this->faker->city(),
-            'postal_code' => $this->faker->postcode(),
+            'family_id' => Family::factory(),
+            'number' => 'CUST-' . $this->faker->unique()->numberBetween(1000, 9999),
             'is_active' => $this->faker->boolean(90), // 90% chance of being active
-            'notes' => $this->faker->optional(0.3)->sentence(8), // 30% chance of having notes
+            'note' => $this->faker->optional(0.3)->sentence(8), // 30% chance of having notes
         ];
     }
 

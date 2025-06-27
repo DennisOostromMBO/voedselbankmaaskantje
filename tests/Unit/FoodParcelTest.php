@@ -13,10 +13,10 @@ use Illuminate\Database\QueryException;
 
 /**
  * Food Parcel Model Unit Tests
- * 
+ *
  * Tests all CRUD operations, relationships, and stored procedures
  * for the FoodParcel model with comprehensive error handling.
- * 
+ *
  * @author Wassim
  * @version 1.0
  */
@@ -35,7 +35,7 @@ class FoodParcelTest extends TestCase
         // Arrange
         $customer = Customer::factory()->create();
         $stock = Stock::factory()->create(['quantity' => 10]);
-        
+
         $data = [
             'customer_id' => $customer->id,
             'stock_id' => $stock->id,
@@ -152,7 +152,7 @@ class FoodParcelTest extends TestCase
         // Act & Assert
         $this->assertIsBool($foodParcel->is_active);
         $this->assertTrue($foodParcel->is_active);
-        
+
         // Test datetime casting
         $this->assertInstanceOf(\Carbon\Carbon::class, $foodParcel->created_at);
         $this->assertInstanceOf(\Carbon\Carbon::class, $foodParcel->updated_at);
@@ -502,9 +502,9 @@ class FoodParcelTest extends TestCase
     {
         // This test would check validation if implemented in the model
         // For now, we'll test the basic structure
-        
+
         $foodParcel = new FoodParcel();
-        
+
         // Assert model properties
         $this->assertEquals('food_parcels', $foodParcel->getTable());
         $this->assertEquals(['stock_id', 'customer_id', 'is_active', 'note'], $foodParcel->getFillable());

@@ -47,7 +47,7 @@
         <!-- Create Form -->
         <form method="POST" action="{{ route('food-parcels.store') }}" id="createForm">
             @csrf
-            
+
             <div class="form-row">
                 <!-- Customer Selection -->
                 <div class="form-group">
@@ -55,16 +55,16 @@
                         <i class="fas fa-user"></i>
                         Customer *
                     </label>
-                    <select 
-                        name="customer_id" 
-                        id="customer_id" 
+                    <select
+                        name="customer_id"
+                        id="customer_id"
                         class="form-control form-select @error('customer_id') is-invalid @enderror"
                         required
                     >
                         <option value="">-- Select Customer --</option>
                         @foreach($customers as $customer)
-                            <option 
-                                value="{{ $customer->id }}" 
+                            <option
+                                value="{{ $customer->id }}"
                                 {{ old('customer_id') == $customer->id ? 'selected' : '' }}
                             >
                                 {{ $customer->first_name }} {{ $customer->last_name }}
@@ -85,22 +85,22 @@
                         <i class="fas fa-warehouse"></i>
                         Available Stock *
                     </label>
-                    <select 
-                        name="stock_id" 
-                        id="stock_id" 
+                    <select
+                        name="stock_id"
+                        id="stock_id"
                         class="form-control form-select @error('stock_id') is-invalid @enderror"
                         required
                     >
                         <option value="">-- Select Stock Item --</option>
                         @foreach($stocks as $stock)
-                            <option 
-                                value="{{ $stock->id }}" 
+                            <option
+                                value="{{ $stock->id }}"
                                 {{ old('stock_id') == $stock->id ? 'selected' : '' }}
                                 data-quantity="{{ $stock->quantity }}"
                                 data-expiry="{{ $stock->expiry_date ? \Carbon\Carbon::parse($stock->expiry_date)->format('d/m/Y') : '' }}"
                                 data-product="{{ $stock->product->name ?? 'Unknown Product' }}"
                             >
-                                {{ $stock->product->name ?? 'Unknown Product' }} 
+                                {{ $stock->product->name ?? 'Unknown Product' }}
                                 (Qty: {{ $stock->quantity }})
                                 @if($stock->expiry_date)
                                     - Exp: {{ \Carbon\Carbon::parse($stock->expiry_date)->format('d/m/Y') }}
@@ -150,9 +150,9 @@
                         <i class="fas fa-toggle-on"></i>
                         Status
                     </label>
-                    <select 
-                        name="is_active" 
-                        id="is_active" 
+                    <select
+                        name="is_active"
+                        id="is_active"
                         class="form-control form-select @error('is_active') is-invalid @enderror"
                     >
                         <option value="1" {{ old('is_active', '1') == '1' ? 'selected' : '' }}>
@@ -177,9 +177,9 @@
                     <i class="fas fa-sticky-note"></i>
                     Notes
                 </label>
-                <textarea 
-                    name="note" 
-                    id="note" 
+                <textarea
+                    name="note"
+                    id="note"
                     class="form-control @error('note') is-invalid @enderror"
                     rows="4"
                     placeholder="Add any additional notes about this food parcel (optional)..."
@@ -217,54 +217,54 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectedProduct = document.getElementById('selectedProduct');
     const selectedQuantity = document.getElementById('selectedQuantity');
     const selectedExpiry = document.getElementById('selectedExpiry');
-    
+
     // Show stock details when selection changes
     stockSelect.addEventListener('change', function() {
         const selectedOption = this.options[this.selectedIndex];
-        
+
         if (this.value) {
             const product = selectedOption.getAttribute('data-product');
             const quantity = selectedOption.getAttribute('data-quantity');
             const expiry = selectedOption.getAttribute('data-expiry');
-            
+
             selectedProduct.textContent = product;
             selectedQuantity.textContent = quantity;
             selectedExpiry.textContent = expiry || 'No expiry date';
-            
+
             // Update quantity badge color based on stock level
             selectedQuantity.className = 'badge ' + (
-                quantity > 10 ? 'badge-success' : 
-                quantity > 5 ? 'badge-warning' : 
+                quantity > 10 ? 'badge-success' :
+                quantity > 5 ? 'badge-warning' :
                 'badge-danger'
             );
-            
+
             stockDetails.style.display = 'block';
         } else {
             stockDetails.style.display = 'none';
         }
     });
-    
+
     // Form validation
     document.getElementById('createForm').addEventListener('submit', function(e) {
         const customerSelect = document.getElementById('customer_id');
         const stockSelect = document.getElementById('stock_id');
-        
+
         if (!customerSelect.value || !stockSelect.value) {
             e.preventDefault();
             alert('Please select both a customer and a stock item.');
             return false;
         }
-        
+
         // Check if stock has quantity
         const selectedOption = stockSelect.options[stockSelect.selectedIndex];
         const quantity = parseInt(selectedOption.getAttribute('data-quantity'));
-        
+
         if (quantity <= 0) {
             e.preventDefault();
             alert('Selected stock item has no available quantity.');
             return false;
         }
-        
+
         return true;
     });
 });
@@ -305,34 +305,34 @@ document.addEventListener('DOMContentLoaded', function() {
     .form-row {
         grid-template-columns: 1fr;
     }
-    
+
     .card-header {
         flex-direction: column;
         align-items: stretch;
         gap: 1rem;
     }
-    
+
     .btn-group {
         flex-direction: column;
         width: 100%;
     }
-    
+
     .btn {
         width: 100%;
         margin-bottom: 0.5rem;
     }
-    
+
     .card-footer .btn-group {
         flex-direction: row;
         justify-content: space-between;
     }
-    
+
     .card-footer .btn {
         flex: 1;
         margin-bottom: 0;
         margin-left: 0.5rem;
     }
-    
+
     .card-footer .btn:first-child {
         margin-left: 0;
     }
@@ -342,25 +342,25 @@ document.addEventListener('DOMContentLoaded', function() {
     .container {
         padding: 0 0.75rem;
     }
-    
+
     .card {
         padding: 1rem;
     }
-    
+
     .card-footer {
         margin: 0 -1rem -1rem -1rem;
         padding: 1rem;
     }
-    
+
     .card-footer .btn-group {
         flex-direction: column;
     }
-    
+
     .card-footer .btn {
         width: 100%;
         margin: 0 0 0.5rem 0;
     }
-    
+
     .card-footer .btn:last-child {
         margin-bottom: 0;
     }

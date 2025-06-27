@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Product Model
- * 
+ *
  * Represents a product entity in the food bank system.
  * A product can have multiple product categories.
  */
