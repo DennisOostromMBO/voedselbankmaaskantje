@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Customer Model
+ * ProductCategory Model
  * 
- * Represents a customer entity in the food bank system.
- * A customer belongs to a family and can have multiple food parcels.
+ * Represents a product category entity in the food bank system.
+ * A product category belongs to a product and can have multiple stocks.
  */
-class Customer extends Model
+class ProductCategory extends Model
 {
     use HasFactory;
 
@@ -23,8 +23,8 @@ class Customer extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'family_id',
-        'number',
+        'product_id',
+        'category_name',
         'is_active',
         'note',
     ];
@@ -39,23 +39,23 @@ class Customer extends Model
     ];
 
     /**
-     * Get the family that owns the customer.
+     * Get the product that owns the product category.
      */
-    public function family(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(Family::class);
+        return $this->belongsTo(Product::class);
     }
 
     /**
-     * Get the food parcels for the customer.
+     * Get the stocks for the product category.
      */
-    public function foodParcels(): HasMany
+    public function stocks(): HasMany
     {
-        return $this->hasMany(FoodParcel::class);
+        return $this->hasMany(Stock::class);
     }
 
     /**
-     * Scope a query to only include active customers.
+     * Scope a query to only include active product categories.
      */
     public function scopeActive($query)
     {
@@ -63,18 +63,10 @@ class Customer extends Model
     }
 
     /**
-     * Get the customer's display name.
+     * Get the product category's display name.
      */
     public function getDisplayNameAttribute(): string
     {
-        return $this->number . ' - ' . $this->family->name;
-    }
-
-    /**
-     * Get the customer's person name through family relationship.
-     */
-    public function getPersonNameAttribute(): string
-    {
-        return $this->family->person->full_name ?? 'Unknown';
+        return $this->category_name . ' (' . $this->product->name . ')';
     }
 }
