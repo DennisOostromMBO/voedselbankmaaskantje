@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreSupplierRequest extends FormRequest
 {
@@ -13,12 +14,15 @@ class StoreSupplierRequest extends FormRequest
 
     public function rules()
     {
+        // Use the correct route parameter name (id or supplier)
+        $supplierId = $this->route('supplier') ?? $this->route('id');
+
         return [
             'supplier_name' => [
                 'required',
                 'string',
                 'max:255',
-                'unique:suppliers,supplier_name',
+                Rule::unique('suppliers', 'supplier_name')->ignore($supplierId),
                 'regex:/^[\pL\s\-]+$/u'
             ],
             'contact_number' => [
