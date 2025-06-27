@@ -12,6 +12,7 @@ return new class extends Migration
         DB::unprepared('DROP PROCEDURE IF EXISTS get_all_suppliers');
         DB::unprepared('DROP PROCEDURE IF EXISTS create_supplier');
         DB::unprepared('DROP PROCEDURE IF EXISTS update_supplier');
+        DB::unprepared('DROP PROCEDURE IF EXISTS delete_supplier');
 
         // Load and create the stored procedures from the SQL files
         $getAllPath = database_path('sp/daniel/get_all_suppliers.sql');
@@ -22,6 +23,9 @@ return new class extends Migration
 
         $updatePath = database_path('sp/daniel/update_supplier.sql');
         DB::unprepared(File::get($updatePath));
+
+        $deletePath = database_path('sp/daniel/delete_supplier.sql');
+        DB::unprepared(File::get($deletePath));
     }
 
     public function down(): void
@@ -30,6 +34,7 @@ return new class extends Migration
         DB::unprepared('DROP PROCEDURE IF EXISTS get_all_suppliers');
         DB::unprepared('DROP PROCEDURE IF EXISTS create_supplier');
         DB::unprepared('DROP PROCEDURE IF EXISTS update_supplier');
+        DB::unprepared('DROP PROCEDURE IF EXISTS delete_supplier');
     }
 };
 

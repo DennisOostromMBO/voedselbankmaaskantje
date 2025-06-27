@@ -13,6 +13,19 @@
 
     <main class="main-content flex-1 w-full">
         <div class="container mx-auto px-4 py-10">
+            <!-- Success message at the top -->
+            @if(session('success'))
+                <div id="success-message" class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white px-6 py-3 rounded shadow-lg flex items-center gap-2 transition-opacity duration-500">
+                    <i class="fas fa-check-circle"></i>
+                    {{ session('success') }}
+                </div>
+                <script>
+                    setTimeout(function() {
+                        var msg = document.getElementById('success-message');
+                        if(msg) msg.style.opacity = 0;
+                    }, 5000);
+                </script>
+            @endif
             <div class="card">
                 <div class="card-header">
                     <div>
@@ -110,9 +123,14 @@
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                         @endif
-                                        <a href="#" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
+                                        <form action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Weet je zeker dat je deze leverancier wilt verwijderen?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

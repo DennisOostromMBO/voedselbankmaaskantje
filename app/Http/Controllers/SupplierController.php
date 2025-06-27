@@ -117,6 +117,19 @@ class SupplierController extends Controller
 
         return redirect()->route('suppliers.index')->with('success', 'Leverancier succesvol bijgewerkt.');
     }
+
+    public function destroy($id)
+    {
+        $result = null;
+        \DB::statement('CALL delete_supplier(?, @result)', [$id]);
+        $result = \DB::select('SELECT @result as result')[0]->result;
+
+        if ($result === 'success') {
+            return redirect()->route('suppliers.index')->with('success', 'Leverancier succesvol verwijderd.');
+        } else {
+            return redirect()->route('suppliers.index')->with('error', 'Kan leverancier niet verwijderen: nog actief in lopende levering.');
+        }
+    }
 }
 
 
