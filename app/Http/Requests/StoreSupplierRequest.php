@@ -29,12 +29,12 @@ class StoreSupplierRequest extends FormRequest
             'note' => 'nullable|string',
             'email' => [
                 'required',
-                'email:rfc,dns',
+                'email', // Use Laravel's default email validation (removes rfc,dns for better compatibility)
                 'max:255'
             ],
             'street' => 'required|string|max:100',
             'house_number' => 'required|string|max:4',
-            'addition' => 'required|string|max:5',
+            'addition' => 'nullable|string|max:5',
             'postcode' => [
                 'required',
                 'regex:/^[1-9][0-9]{3}[A-Z]{2}$/'

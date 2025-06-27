@@ -9,4 +9,6 @@ Route::get('/suppliers/create', function () {
 })->name('suppliers.create');
 Route::post('/suppliers', [SupplierController::class, 'store'])->name('suppliers.store');
 Route::get('/suppliers/{id}', [SupplierController::class, 'show'])->name('suppliers.show');
+Route::get('/suppliers/{id}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
+Route::post('/suppliers/{id}', [SupplierController::class, 'update'])->name('suppliers.update');
 

@@ -68,6 +68,41 @@ class SupplierController extends Controller
 
         return redirect()->route('suppliers.index')->with('success', 'Leverancier succesvol toegevoegd.');
     }
+
+    public function edit($id)
+    {
+        $allSuppliers = Supplier::getAllWithContacts();
+        $supplier = collect($allSuppliers)->firstWhere('id', $id);
+
+        if (!$supplier) {
+            abort(404);
+        }
+
+        return view('suppliers.edit', compact('supplier'));
+    }
+
+    public function update(StoreSupplierRequest $request, $id)
+    {
+        $validated = $request->validated();
+
+        // You need to create a stored procedure 'update_supplier' with the same parameter order as create_supplier, plus the id as the first parameter.
+        \DB::statement('CALL update_supplier(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+            $id,
+            $validated['supplier_name'],
+            $validated['contact_number'],
+            $validated['is_active'],
+            $validated['note'] ?? null,
+            $validated['email'],
+            $validated['street'],
+            $validated['house_number'],
+            $validated['addition'],
+            $validated['postcode'],
+            $validated['city'],
+            $validated['mobile'],
+        ]);
+
+        return redirect()->route('suppliers.index')->with('success', 'Leverancier succesvol bijgewerkt.');
+    }
 }
-           
+
 
