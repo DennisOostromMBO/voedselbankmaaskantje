@@ -49,9 +49,6 @@
         <h2>Update Stock Quantities</h2>
         {{-- Show custom error and validation errors --}}
         @if(session('custom_error'))
-            <div class="alert alert-danger">
-                {{ session('custom_error') }}
-            </div>
         @endif
         @if($errors->any())
             <div class="alert alert-danger">
