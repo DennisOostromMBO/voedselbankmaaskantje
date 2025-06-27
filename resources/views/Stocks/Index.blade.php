@@ -10,15 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <header class="header no-print">
-        <nav class="navbar container">
-            <a href="#" class="logo">Voedselbank Maaskantje</a>
-            <ul class="nav-links">
-                <li><a href="#" class="nav-link active">Dashboard</a></li>
-                <li><a href="#" class="nav-link">Stocks</a></li>
-            </ul>
-        </nav>
-    </header>
+    
     <main class="main-content">
         <div class="container">
             <div class="card">
