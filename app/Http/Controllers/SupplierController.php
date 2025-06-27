@@ -20,6 +20,27 @@ class SupplierController extends Controller
             $allSuppliers = [];
         }
 
+        // Search logic
+        $search = $request->input('search');
+        $status = $request->input('status');
+        if ($search) {
+            $allSuppliers = array_filter($allSuppliers, function ($supplier) use ($search) {
+                $search = mb_strtolower($search);
+                return (
+                    (isset($supplier->supplier_name) && mb_stripos($supplier->supplier_name, $search) !== false) ||
+                    (isset($supplier->email) && mb_stripos($supplier->email, $search) !== false) ||
+                    (isset($supplier->contact_number) && mb_stripos($supplier->contact_number, $search) !== false)
+                );
+            });
+            $allSuppliers = array_values($allSuppliers);
+        }
+        if ($status !== null && $status !== '') {
+            $allSuppliers = array_filter($allSuppliers, function ($supplier) use ($status) {
+                return isset($supplier->is_active) && (string)$supplier->is_active === $status;
+            });
+            $allSuppliers = array_values($allSuppliers);
+        }
+
         $perPage = 2;
         $currentPage = $request->input('page', 1);
         $currentItems = array_slice($allSuppliers, ($currentPage - 1) * $perPage, $perPage);

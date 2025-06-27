@@ -56,27 +56,27 @@
                 </div>
 
                 <!-- Search and Filters -->
-                <div class="search-container">
+                <form method="GET" action="{{ route('suppliers.index') }}" class="search-container">
                     <div class="form-group search-input">
                         <label class="form-label">Zoek leveranciers</label>
-                        <input type="text" class="form-control" placeholder="Zoek op naam, e-mail of telefoon...">
+                        <input type="text" name="search" class="form-control" placeholder="Zoek op naam, e-mail of telefoon..." value="{{ request('search') }}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Status</label>
-                        <select class="form-control form-select">
-                            <option>Alle statussen</option>
-                            <option>Actief</option>
-                            <option>Inactief</option>
+                        <select name="status" class="form-control form-select">
+                            <option value="">Alle statussen</option>
+                            <option value="1" @if(request('status')==='1') selected @endif>Actief</option>
+                            <option value="0" @if(request('status')==='0') selected @endif>Inactief</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">&nbsp;</label>
-                        <button class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary">
                             <i class="fas fa-search"></i>
                             Zoeken
                         </button>
                     </div>
-                </div>
+                </form>
 
                 <!-- Table -->
                 <div id="delete-tooltip-container"></div>
