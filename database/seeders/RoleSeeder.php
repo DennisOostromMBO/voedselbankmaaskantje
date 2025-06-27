@@ -11,26 +11,23 @@ class RoleSeeder extends Seeder
     {
         DB::table('roles')->insert([
             [
-                'user_id' => 1,
-                'name' => 'admin',
+                'name' => 'Directie',
                 'is_active' => true,
-                'comment' => 'Administrator role',
+                'comment' => 'Directie rol',
                 'date_created' => now(),
                 'date_changed' => now(),
             ],
             [
-                'user_id' => 1,
-                'name' => 'user',
+                'name' => 'Magazijnmedewerker',
                 'is_active' => true,
-                'comment' => 'Standard user role',
+                'comment' => 'Magazijnmedewerker rol',
                 'date_created' => now(),
                 'date_changed' => now(),
             ],
             [
-                'user_id' => 2,
-                'name' => 'manager',
+                'name' => 'Vrijwilliger',
                 'is_active' => true,
-                'comment' => null,
+                'comment' => 'Vrijwilliger rol',
                 'date_created' => now(),
                 'date_changed' => now(),
             ],
