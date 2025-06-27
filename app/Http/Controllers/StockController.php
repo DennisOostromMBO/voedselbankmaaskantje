@@ -212,4 +212,10 @@ class StockController extends Controller
         }
         return view('Stocks.update', compact('stock'));
     }
+    
+    public function destroy($id)
+    {
+        DB::statement('CALL destroy_stocks(?)', [$id]);
+        return redirect()->route('stocks.index')->with('success', 'Stock deleted successfully.');
+    }
 }
