@@ -89,8 +89,12 @@
                     {{-- Familienaam veld verwijderd uit het formulier --}}
                     <div>
                         <label class="block text-sm font-semibold mb-1 text-blue-900">Wens</label>
-                        <input type="text" name="wish" value="{{ old('wish', $customer->wish ?? '') }}"
-                            class="w-full border border-blue-200 rounded px-2 py-1 text-gray-900 focus:ring focus:ring-blue-200">
+                        <select name="wish" class="w-full border border-blue-200 rounded px-2 py-1 text-gray-900 focus:ring focus:ring-blue-200">
+                            <option value="geen" {{ old('wish', $customer->wish ?? '') == 'geen' ? 'selected' : '' }}>Geen</option>
+                            <option value="Vegetarisch" {{ old('wish', $customer->wish ?? '') == 'Vegetarisch' ? 'selected' : '' }}>Vegetarisch</option>
+                            <option value="Veganistisch" {{ old('wish', $customer->wish ?? '') == 'Veganistisch' ? 'selected' : '' }}>Veganistisch</option>
+                            <option value="Geen varkensvlees" {{ old('wish', $customer->wish ?? '') == 'Geen varkensvlees' ? 'selected' : '' }}>Geen varkensvlees</option>
+                        </select>
                     </div>
                 </div>
                 <div class="flex justify-end space-x-4 mt-8">
