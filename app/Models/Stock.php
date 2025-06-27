@@ -115,23 +115,26 @@ class Stock extends Model
      */
     public static function getForDropdown()
     {
-        $stocks = self::GetAllStocks();
-        
-        return collect($stocks)->map(function ($stock) {
+        // Call the stored procedure
+        $results = collect(\DB::select('CALL sp_get_food_parcel_stats()'));
+
+        // Map results to ensure required fields exist for dropdowns
+        return $results->map(function ($item) {
             return (object)[
-                'id' => $stock->id,
-                'product_name' => $stock->product_name ?? 'Onbekend Product',
-                'category_name' => $stock->category_name ?? 'Onbekende Categorie',
-                'quantity_in_stock' => $stock->quantity_in_stock ?? 0,
-                'unit' => $stock->unit ?? 'stuks',
-                'is_active' => $stock->is_active,
-                'display_name' => ($stock->product_name ?? 'Onbekend Product') . ' - ' . 
-                                ($stock->category_name ?? 'Onbekende Categorie') . 
-                                ' (' . ($stock->quantity_in_stock ?? 0) . ' ' . ($stock->unit ?? 'stuks') . ')',
-                'received_date' => $stock->received_date,
-                'delivered_date' => $stock->delivered_date,
+                'id' => $item->stock_id ?? $item->id ?? null,
+                'display_name' => $item->display_name ?? $item->product_name ?? 'Onbekend',
+                'product_name' => $item->product_name ?? '',
+                'category_name' => $item->category_name ?? '',
+                'quantity_in_stock' => $item->quantity_in_stock ?? 0,
+                'unit' => $item->unit ?? 'stuks',
+                'is_active' => $item->is_active ?? true,
+                'received_date' => $item->received_date ?? null,
+                'delivered_date' => $item->delivered_date ?? null,
             ];
-        })->where('is_active', true);
+        })->filter(function ($item) {
+            // Only include items with a valid id
+            return !is_null($item->id);
+        })->values();
     }
 
     /**
@@ -162,3 +165,4 @@ class Stock extends Model
     }
 
 }
+
