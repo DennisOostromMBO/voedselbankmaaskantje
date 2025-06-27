@@ -16,7 +16,15 @@
                 <i class="fas fa-utensils"></i>
                 Voedselbank Maaskantje
             </a>
-            <ul class="nav-links">
+            
+            <!-- Hamburger Menu Button -->
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-links" id="navLinks">
                 <li><a href="#" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="#" class="nav-link"><i class="fas fa-users"></i> Customers</a></li>
                 <li><a href="#" class="nav-link"><i class="fas fa-box"></i> Food Parcels</a></li>
@@ -355,5 +363,63 @@
             }
         }
     </style>
+
+    <script>
+        // Hamburger Menu Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.getElementById('hamburger');
+            const navLinks = document.getElementById('navLinks');
+            
+            hamburger.addEventListener('click', function() {
+                hamburger.classList.toggle('active');
+                navLinks.classList.toggle('mobile-open');
+            });
+            
+            // Close mobile menu when clicking on a nav link
+            const navLinksItems = navLinks.querySelectorAll('.nav-link');
+            navLinksItems.forEach(link => {
+                link.addEventListener('click', function() {
+                    hamburger.classList.remove('active');
+                    navLinks.classList.remove('mobile-open');
+                });
+            });
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
+                    hamburger.classList.remove('active');
+                    navLinks.classList.remove('mobile-open');
+                }
+            });
+        });
+
+        // Button ripple effect for enhanced UX
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.btn, .nav-link');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = button.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.classList.add('ripple');
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    
+                    button.style.position = 'relative';
+                    button.style.overflow = 'hidden';
+                    button.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 300);
+                });
+            });
+        });
+    </script>
 </body>
 </html>
