@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.app-sections')
 
-@section('title', 'Food Parcel Details')
+@section('title', 'Voedselpakket Details')
 
 @section('content')
 <div class="container">
@@ -25,24 +25,24 @@
             <div>
                 <h1 class="card-title">
                     <i class="fas fa-box"></i>
-                    Food Parcel Details
+                    Voedselpakket Details
                 </h1>
                 <p class="card-subtitle">
-                    View detailed information about food parcel #{{ $foodParcel->id }}
+                    Bekijk gedetailleerde informatie over voedselpakket #{{ $foodParcel->id }}
                 </p>
             </div>
             <div class="btn-group">
                 <a href="{{ route('food-parcels.index') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i>
-                    <span class="btn-text">Back to List</span>
+                    <span class="btn-text">Terug naar Overzicht</span>
                 </a>
                 <a href="{{ route('food-parcels.edit', $foodParcel->id) }}" class="btn btn-warning">
                     <i class="fas fa-edit"></i>
-                    <span class="btn-text">Edit</span>
+                    <span class="btn-text">Wijzigen</span>
                 </a>
                 <button type="button" class="btn btn-danger" onclick="confirmDelete({{ $foodParcel->id }})">
                     <i class="fas fa-trash"></i>
-                    <span class="btn-text">Delete</span>
+                    <span class="btn-text">Verwijderen</span>
                 </button>
             </div>
         </div>
@@ -185,7 +185,7 @@
                         <label class="detail-label">Product Name</label>
                         <div class="detail-value">
                             <i class="fas fa-box"></i>
-                            {{ $foodParcel->stock_name ?? 'N/A' }}
+                            {{ $foodParcel->product_name ?? 'Onbekend Product' }}
                         </div>
                     </div>
 
@@ -193,7 +193,7 @@
                         <label class="detail-label">Category</label>
                         <div class="detail-value">
                             <i class="fas fa-tags"></i>
-                            {{ $foodParcel->stock_category ?? 'N/A' }}
+                            {{ $foodParcel->category_name ?? 'Onbekende Categorie' }}
                         </div>
                     </div>
 
@@ -201,23 +201,30 @@
                         <label class="detail-label">Available Quantity</label>
                         <div class="detail-value">
                             <i class="fas fa-cubes"></i>
-                            {{ $foodParcel->stock_quantity ?? 0 }} units
+                            {{ $foodParcel->stock_quantity ?? 0 }} {{ $foodParcel->stock_unit ?? 'stuks' }}
                         </div>
                     </div>
 
                     <div class="detail-item">
-                        <label class="detail-label">Expiry Date</label>
+                        <label class="detail-label">Received Date</label>
                         <div class="detail-value">
-                            <i class="fas fa-calendar-times"></i>
-                            @if($foodParcel->stock_expiry_date)
-                                {{ \Carbon\Carbon::parse($foodParcel->stock_expiry_date)->format('M d, Y') }}
-                                @if(\Carbon\Carbon::parse($foodParcel->stock_expiry_date)->isPast())
-                                    <span class="status-badge status-danger">Expired</span>
-                                @elseif(\Carbon\Carbon::parse($foodParcel->stock_expiry_date)->diffInDays() <= 7)
-                                    <span class="status-badge status-warning">Expiring Soon</span>
-                                @endif
+                            <i class="fas fa-calendar-plus"></i>
+                            @if($foodParcel->stock_received_date)
+                                {{ \Carbon\Carbon::parse($foodParcel->stock_received_date)->format('d/m/Y') }}
                             @else
-                                N/A
+                                Onbekend
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <label class="detail-label">Delivered Date</label>
+                        <div class="detail-value">
+                            <i class="fas fa-truck"></i>
+                            @if($foodParcel->stock_delivered_date)
+                                {{ \Carbon\Carbon::parse($foodParcel->stock_delivered_date)->format('d/m/Y') }}
+                            @else
+                                Nog niet geleverd
                             @endif
                         </div>
                     </div>
