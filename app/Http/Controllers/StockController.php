@@ -78,6 +78,11 @@ class StockController extends Controller
     
     public function store(Request $request)
     {
+        // Validate product_name: only letters (allow spaces and accents)
+        $request->validate([
+            'product_name' => ['required', 'regex:/^[\pL\s]+$/u'],
+            // ...other validations if needed...
+        ]);
         // Map short name to category id in PHP
         $categoriesRaw = \DB::table('product_categories')
             ->select('id', 'category_name')

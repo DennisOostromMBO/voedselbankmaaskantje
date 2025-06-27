@@ -29,6 +29,8 @@
                 <form action="{{ route('stocks.store') }}" method="POST">
                     @csrf
                     @if(session('custom_error'))
+                        <div class="alert alert-danger mb-3">
+                            {{ session('custom_error') }}
                         </div>
                     @endif
                     {{-- Show validation errors --}}
@@ -55,7 +57,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Product</label>
-                            <input type="text" name="product_name" class="form-control" required placeholder="Voer productnaam in">
+                            <input type="text" name="product_name" class="form-control" required placeholder="Voer productnaam in" pattern="^[A-Za-zÀ-ÿ\s]+$" title="Alleen letters en spaties zijn toegestaan" oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '')">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Eenheid</label>
