@@ -12,4 +12,10 @@ class CustomerController extends Controller
         $customers = DB::select('CALL spGetAllCustomers()');
         return view('customers.index', compact('customers'));
     }
+
+    public function destroy($id)
+    {
+        DB::statement('CALL spDeleteCustomer(?)', [$id]);
+        return redirect()->route('customers.index')->with('success', 'Klant verwijderd.');
+    }
 }

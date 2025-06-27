@@ -10,6 +10,11 @@
 <body class="bg-gray-50 font-sans" style="font-family: 'Noto Color Emoji', sans-serif;">
     <div class="max-w-[98vw] mx-auto mt-8 px-2">
         <h1 class="text-2xl font-bold mb-4">Klanten</h1>
+        @if(session('success'))
+            <div class="mb-4 text-green-700 bg-green-100 border border-green-300 rounded px-4 py-2 text-center font-semibold">
+                {{ session('success') }}
+            </div>
+        @endif
         <div class="bg-white rounded-xl shadow border border-blue-100">
             @if(count($customers) === 0)
                 <div class="text-red-600 text-center py-8 text-lg font-semibold">
@@ -52,7 +57,11 @@
                             </td>
                             <td class="px-2 py-1">
                                 <button class="bg-orange-400 hover:bg-orange-500 text-white px-1 py-0.5 rounded text-xs" title="Bewerken">✏️</button>
-                                <button class="bg-red-500 hover:bg-red-600 text-white px-1 py-0.5 rounded text-xs" title="Verwijderen">🗑️</button>
+                                <form action="{{ route('customers.destroy', $customer->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-1 py-0.5 rounded text-xs" title="Verwijderen" onclick="return confirm('Weet je zeker dat je deze klant wilt verwijderen?')">🗑️</button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach
