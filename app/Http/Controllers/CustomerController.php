@@ -1,7 +1,7 @@
 <?php
- 
+
 namespace App\Http\Controllers;
- 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Customer;
@@ -13,9 +13,7 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         try {
-            $customers = Customer::getAllFromSP();
-
-            // Filter op zoekterm (naam, familienaam, e-mail, mobiel)
+            $customers = Customer::ge            // Filter op zoekterm (naam, familienaam, e-mail, mobiel)
             $search = $request->input('search');
             if ($search) {
                 $searchLower = mb_strtolower($search);
@@ -28,6 +26,8 @@ class CustomerController extends Controller
                 });
                 $customers = array_values($customers); // Re-index array after filter
             }
+
+tAllFromSP();
 
             // Bepaal welke klanten gekoppeld zijn aan een voedselpakket
             $idsWithParcel = DB::table('food_parcels')->pluck('customer_id')->toArray();
@@ -258,4 +258,5 @@ class CustomerController extends Controller
             return back()->with('error', 'Fout bij verwijderen klant: ' . $e->getMessage());
         }
     }
+}   //
 }

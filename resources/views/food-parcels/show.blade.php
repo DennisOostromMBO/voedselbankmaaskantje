@@ -156,13 +156,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="action-buttons">
-                    <a href="{{ route('customers.show', $foodParcel->customer_id) }}" class="btn btn-info btn-sm">
-                        <i class="fas fa-external-link-alt"></i>
-                        View Customer Details
-                    </a>
-                </div>
             </div>
         </div>
 
@@ -229,13 +222,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="action-buttons">
-                    <a href="{{ route('stocks.show', $foodParcel->stock_id) }}" class="btn btn-info btn-sm">
-                        <i class="fas fa-external-link-alt"></i>
-                        View Stock Details
-                    </a>
-                </div>
             </div>
         </div>
     </div>
@@ -246,17 +232,17 @@
             <div class="action-buttons-main">
                 <a href="{{ route('food-parcels.edit', $foodParcel->id) }}" class="btn btn-warning btn-lg">
                     <i class="fas fa-edit"></i>
-                    Edit Food Parcel
+                  Bewerk Voedselpakket
                 </a>
 
                 <button type="button" class="btn btn-danger btn-lg" onclick="confirmDelete({{ $foodParcel->id }})">
                     <i class="fas fa-trash"></i>
-                    Delete Food Parcel
+                    Verwijder Voedselpakket
                 </button>
 
                 <a href="{{ route('food-parcels.index') }}" class="btn btn-secondary btn-lg">
                     <i class="fas fa-arrow-left"></i>
-                    Back to List
+                    Terug naar Lijst
                 </a>
             </div>
         </div>
@@ -454,9 +440,10 @@ function confirmDelete(id) {
     const modal = document.getElementById('deleteModal');
     modal.style.display = 'block';
 
-    // Update form action
+    // Use a Blade-generated route with a placeholder, then replace in JS
     const form = document.getElementById('deleteForm');
-    form.action = `{{ route('food-parcels.destroy', '') }}/${id}`;
+    const routeTemplate = "{{ route('food-parcels.destroy', ['id' => 'FOODPARCEL_ID_PLACEHOLDER']) }}";
+    form.action = routeTemplate.replace('FOODPARCEL_ID_PLACEHOLDER', id);
 }
 
 /**
