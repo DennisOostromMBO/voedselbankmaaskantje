@@ -95,7 +95,7 @@
                                 </td>
                                 <td>
                                     <div class="btn-group">
-                                        <a href="#" class="btn btn-info btn-sm">
+                                        <a href="{{ route('suppliers.show', $supplier->id) }}" class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <a href="#" class="btn btn-warning btn-sm">

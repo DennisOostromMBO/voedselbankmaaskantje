@@ -36,4 +36,31 @@ class SupplierController extends Controller
 
         return view('suppliers.index', compact('suppliers'));
     }
+
+    public function show($id)
+    {
+        $supplier = \DB::table('suppliers')
+            ->leftJoin('contacts', 'contacts.supplier_id', '=', 'suppliers.id')
+            ->select(
+                'suppliers.*',
+                'contacts.street',
+                'contacts.postcode',
+                'contacts.house_number',
+                'contacts.addition',
+                'contacts.city',
+                'contacts.mobile',
+                'contacts.email',
+                'contacts.full_address',
+                'contacts.is_active AS contact_is_active',
+                'contacts.note AS contact_note'
+            )
+            ->where('suppliers.id', $id)
+            ->first();
+
+        if (!$supplier) {
+            abort(404);
+        }
+
+        return view('suppliers.show', compact('supplier'));
+    }
 }
