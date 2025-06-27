@@ -4,8 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+ Stocks_features
+use Illuminate\Support\Facades\DB;
+
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+
 
 /**
  * Stock Model
@@ -16,6 +20,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Stock extends Model
 {
     use HasFactory;
+
+ Stocks_features
+    public static function GetAllStocks()
+     {
+        return DB::select('CALL get_all_stocks()');
+     }
+     public static function createStocks()
+        {
+            return DB::select('CALL create_stocks()');
+        }
 
     /**
      * The attributes that are mass assignable.
@@ -84,4 +98,5 @@ class Stock extends Model
     {
         return $this->productCategory->category_name ?? 'Unknown';
     }
+
 }

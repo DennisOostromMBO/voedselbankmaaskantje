@@ -13,6 +13,12 @@ return new class extends Migration
             $table->foreignId('product_category_id')->constrained('product_categories')->onDelete('cascade');
             $table->boolean('is_active');
             $table->text('note')->nullable();
+            $table->date('received_date')->nullable();
+            $table->date('delivered_date')->nullable();
+            $table->string('unit', 50)->nullable();
+            $table->unsignedInteger('quantity_in_stock')->default(0);
+            $table->unsignedInteger('quantity_delivered')->default(0);
+            $table->unsignedInteger('quantity_supplied')->default(0);
             $table->timestamps();
         });
     }
