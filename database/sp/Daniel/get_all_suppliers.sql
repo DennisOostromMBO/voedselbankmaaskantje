@@ -6,6 +6,7 @@ BEGIN
         s.contact_number,
         s.is_active,
         s.note,
+        s.upcoming_delivery_at,
         s.created_at,
         s.updated_at,
         c.street,

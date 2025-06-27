@@ -36,6 +36,16 @@
                     <span>{{ $supplier->full_address ?? '-' }}</span>
                 </div>
                 <div class="mb-4">
+                    <span class="font-semibold">Volgende levering:</span>
+                    <span>
+                        @if(!empty($supplier->upcoming_delivery_at))
+                            {{ \Carbon\Carbon::parse($supplier->upcoming_delivery_at)->format('d-m-Y') }}
+                        @else
+                            Geen gepland
+                        @endif
+                    </span>
+                </div>
+                <div class="mb-4">
                     <span class="font-semibold">Status:</span>
                     @if($supplier->is_active)
                         <span class="badge badge-success">Actief</span>

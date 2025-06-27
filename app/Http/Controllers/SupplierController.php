@@ -78,14 +78,28 @@ class SupplierController extends Controller
             abort(404);
         }
 
+        // If there is a next delivery, do not allow editing
+        if (!empty($supplier->upcoming_delivery_at)) {
+            return redirect()->route('suppliers.index')
+                ->with('error', 'Deze leverancier kan niet worden bewerkt omdat er een volgende levering gepland staat. Verwijder of wijzig eerst de geplande levering.');
+        }
+
         return view('suppliers.edit', compact('supplier'));
     }
 
     public function update(StoreSupplierRequest $request, $id)
     {
+        $allSuppliers = Supplier::getAllWithContacts();
+        $supplier = collect($allSuppliers)->firstWhere('id', $id);
+
+        // If there is a next delivery, do not allow updating
+        if (!empty($supplier->upcoming_delivery_at)) {
+            return redirect()->route('suppliers.index')
+                ->with('error', 'Deze leverancier kan niet worden bijgewerkt omdat er een volgende levering gepland staat. Verwijder of wijzig eerst de geplande levering.');
+        }
+
         $validated = $request->validated();
 
-        // You need to create a stored procedure 'update_supplier' with the same parameter order as create_supplier, plus the id as the first parameter.
         \DB::statement('CALL update_supplier(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
             $id,
             $validated['supplier_name'],

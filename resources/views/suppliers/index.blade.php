@@ -92,13 +92,24 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="btn-group">
+                                    <div class="btn-group flex flex-row items-center gap-2">
                                         <a href="{{ route('suppliers.show', $supplier->id) }}" class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('suppliers.edit', $supplier->id) }}" class="btn btn-warning btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                                        @if(!empty($supplier->upcoming_delivery_at))
+                                            <span class="relative group">
+                                                <span class="btn btn-warning btn-sm opacity-50 cursor-not-allowed pointer-events-none">
+                                                    <i class="fas fa-edit"></i>
+                                                </span>
+                                                <span class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 bg-white border border-red-300 text-xs text-red-600 rounded px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap cursor-not-allowed">
+                                                    Kan niet bewerken: geplande levering
+                                                </span>
+                                            </span>
+                                        @else
+                                            <a href="{{ route('suppliers.edit', $supplier->id) }}" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        @endif
                                         <a href="#" class="btn btn-danger btn-sm">
                                             <i class="fas fa-trash"></i>
                                         </a>
