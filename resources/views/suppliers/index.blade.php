@@ -116,15 +116,15 @@
                     </table>
                 </div>
 
-                <!-- Pagination (optional, static for now) -->
-                <div class="pagination">
-                    <a href="#">‹ Vorige</a>
-                    <span class="current">1</span>
-                    <a href="#">2</a>
-                    <a href="#">3</a>
-                    <a href="#">Volgende ›</a>
+                <!-- Pagination (styled like example) -->
+                <div class="pagination flex justify-center items-center gap-2 mt-6">
+                    {{ $suppliers->onEachSide(1)->links('vendor.pagination.custom') }}
                 </div>
             </div>
+        </div>
+    </main>
+</body>
+</html>
         </div>
     </main>
 </body>
