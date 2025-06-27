@@ -30,6 +30,8 @@ class DatabaseSeeder extends Seeder
             StockSeeder::class,
             FoodParcelSeeder::class,
             CollectedParcelSeeder::class,
+            AllergySeeder::class,
+            ProductAllergySeeder::class,
         ]);
     }
 }
