@@ -11,6 +11,19 @@ class Supplier extends Model
     use HasFactory;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'supplier_name',
+        'contact_number',
+        'is_active',
+        'note',
+        'upcoming_delivery_at',
+    ];
+
+    /**
      * Get all suppliers with contact info using the stored procedure.
      */
     public static function getAllWithContacts()
