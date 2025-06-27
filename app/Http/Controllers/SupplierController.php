@@ -46,5 +46,38 @@ class SupplierController extends Controller
 
         return view('suppliers.show', compact('supplier'));
     }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'supplier_name' => 'required|string|max:255',
+            'contact_number' => 'nullable|string|max:255',
+            'is_active' => 'required|boolean',
+            'note' => 'nullable|string',
+            'email' => 'nullable|email|max:255',
+            'street' => 'nullable|string|max:100',
+            'house_number' => 'nullable|string|max:4',
+            'addition' => 'nullable|string|max:5',
+            'postcode' => 'nullable|string|max:6',
+            'city' => 'nullable|string|max:50',
+            'mobile' => 'nullable|string|max:10',
+        ]);
+
+        \DB::statement('CALL create_supplier(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+            $validated['supplier_name'],
+            $validated['contact_number'] ?? null,
+            $validated['is_active'],
+            $validated['note'] ?? null,
+            $validated['email'] ?? null,
+            $validated['street'] ?? null,
+            $validated['house_number'] ?? null,
+            $validated['addition'] ?? null,
+            $validated['postcode'] ?? null,
+            $validated['city'] ?? null,
+            $validated['mobile'] ?? null,
+        ]);
+
+        return redirect()->route('suppliers.index')->with('success', 'Leverancier succesvol toegevoegd.');
+    }
 }
 

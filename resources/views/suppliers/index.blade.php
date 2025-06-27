@@ -23,7 +23,7 @@
                         <p class="card-subtitle">Overzicht van alle leveranciers</p>
                     </div>
                     <div class="btn-group">
-                        <a href="#" class="btn btn-primary">
+                        <a href="{{ route('suppliers.create') }}" class="btn btn-primary">
                             <i class="fas fa-plus"></i>
                             Nieuwe Leverancier
                         </a>
