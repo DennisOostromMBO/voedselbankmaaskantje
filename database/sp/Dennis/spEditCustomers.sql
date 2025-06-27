@@ -1,13 +1,15 @@
 DROP PROCEDURE IF EXISTS spEditCustomer;
-DELIMITER //
 CREATE PROCEDURE spEditCustomer(
     IN p_id INT,
     IN p_first_name VARCHAR(255),
     IN p_infix VARCHAR(50),
     IN p_last_name VARCHAR(255),
-    IN p_family_name VARCHAR(255),
-    IN p_full_address VARCHAR(255),
-    IN p_mobile VARCHAR(255),
+    IN p_street VARCHAR(255),
+    IN p_house_number VARCHAR(10),
+    IN p_addition VARCHAR(10),
+    IN p_postcode VARCHAR(10),
+    IN p_city VARCHAR(50),
+    IN p_mobile VARCHAR(20),
     IN p_email VARCHAR(255),
     IN p_age INT,
     IN p_wish VARCHAR(255)
@@ -28,14 +30,15 @@ BEGIN
         persons.age = p_age
     WHERE persons.id = v_person_id;
 
-    -- Update families
-    UPDATE families
-    SET families.name = p_family_name
-    WHERE families.id = v_family_id;
+    -- families.name NIET meer updaten
 
     -- Update contacts
     UPDATE contacts
-    SET full_address = p_full_address,
+    SET street = p_street,
+        house_number = p_house_number,
+        addition = p_addition,
+        postcode = p_postcode,
+        city = p_city,
         mobile = p_mobile,
         email = p_email
     WHERE customer_id = p_id;
@@ -44,5 +47,10 @@ BEGIN
     UPDATE wishes
     SET choices = p_wish
     WHERE customer_id = p_id;
+END
+    UPDATE wishes
+    SET choices = p_wish
+    WHERE customer_id = p_id;
+END
 END //
 DELIMITER ;

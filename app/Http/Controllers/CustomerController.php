@@ -26,31 +26,67 @@ class CustomerController extends Controller
     
     public function edit($id)
     {
-        $customer = Customer::getByIdFromSP($id);
-        if (!$customer) {
-            return redirect()->route('customers.index')->with('error', 'Klant niet gevonden.');
-        }
-        return view('customers.edit', compact('customer'));
+        $customer = DB::select('CALL spGetCustomerById(?)', [$id])[0];
+        return view('customers.edit', ['customer' => $customer]);
     }
 
     public function update(Request $request, $id)
     {
-        // Hier zou je een SP aanroepen om te updaten, bijvoorbeeld:
-        // Customer::updateFromSP($id, $request->all());
-        // Voorbeeld validatie:
-        $validated = $request->validate([
-            'full_name' => 'required|string|max:255',
-            'family_name' => 'required|string|max:255',
-            'full_address' => 'required|string|max:255',
-            'mobile' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'age' => 'required|integer',
-            'customer_number' => 'required|string|max:255',
-            'wish' => 'nullable|string|max:255',
+        $validatedData = $request->validate([
+            'first_name'      => 'required|string|max:255|regex:/^[a-zA-ZÀ-ÿ\- ]+$/u',
+            'infix'           => 'nullable|string|max:255|regex:/^[a-zA-ZÀ-ÿ\- ]+$/u',
+            'last_name'       => 'required|string|max:255|regex:/^[a-zA-ZÀ-ÿ\- ]+$/u',
+            'street'          => 'required|string|max:255|regex:/^[a-zA-ZÀ-ÿ\- ]+$/u',
+            'house_number'    => 'required|regex:/^\d+$/|digits_between:1,4',
+            'addition'        => 'nullable|string|max:8',
+            'postcode'        => 'required|regex:/^[0-9]{4}[A-Z]{2}$/',
+            'city'            => 'required|string|max:255|regex:/^[a-zA-ZÀ-ÿ\- ]+$/u',
+            'mobile'          => 'required|regex:/^06\d{8}$/',
+            'email'           => 'required|email|max:255|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/|not_regex:/xn--/',
+            'age'             => 'required|integer',
+            'wish'            => 'nullable|string|max:255',
         ]);
-        // Roep hier je SP aan, bijvoorbeeld:
-        Customer::updateFromSP($id, $validated);
+        // Controleer uniekheid van mobiel en email in contacts, behalve voor deze klant
+        $emailExists = DB::table('contacts')
+            ->where('email', $validatedData['email'])
+            ->where('customer_id', '!=', $id)
+            ->exists();
 
-        return redirect()->route('customers.index')->with('success', 'Klant bijgewerkt.');
+        $mobileExists = DB::table('contacts')
+            ->where('mobile', $validatedData['mobile'])
+            ->where('customer_id', '!=', $id)
+            ->exists();
+
+        $errors = [];
+        if ($emailExists) {
+            $errors['email'] = 'Let op! Dit e-mailadres is al in gebruik door een andere klant!';
+        }
+        if ($mobileExists) {
+            $errors['mobile'] = 'Let op! Dit mobiele nummer is al in gebruik door een andere klant!';
+        }
+        if (!empty($errors)) {
+            return back()->withInput()->withErrors($errors);
+        }
+
+        try {
+            $affected = DB::statement('CALL spEditCustomer(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+                $id,
+                $validatedData['first_name'],
+                $validatedData['infix'] ?? '',
+                $validatedData['last_name'],
+                $validatedData['street'],
+                $validatedData['house_number'],
+                $validatedData['addition'] ?? '',
+                $validatedData['postcode'],
+                $validatedData['city'],
+                $validatedData['mobile'],
+                $validatedData['email'],
+                $validatedData['age'],
+                $validatedData['wish'] ?? ''
+            ]);
+            return redirect()->route('customers.index')->with('success', 'Klant bijgewerkt!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Fout: ' . $e->getMessage());
+        }
     }
 }

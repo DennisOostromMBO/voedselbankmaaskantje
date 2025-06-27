@@ -9,6 +9,17 @@
 <body class="bg-gray-50 font-sans">
     <div class="max-w-2xl mx-auto mt-10 px-4">
         <h1 class="text-2xl font-bold mb-6 text-blue-900">Klant bewerken</h1>
+        @if ($errors->any())
+            <div class="mb-6">
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    <ul class="list-disc pl-5 space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <li class="text-sm">{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        @endif
         <div class="bg-white rounded-xl shadow border border-blue-100 p-6">
             <form method="POST" action="{{ route('customers.update', $customer->id) }}">
                 @csrf
@@ -29,11 +40,12 @@
                         <input type="text" name="last_name" value="{{ old('last_name', $customer->last_name ?? '') }}" required
                             class="w-full border border-blue-200 rounded px-2 py-1 text-gray-900 focus:ring focus:ring-blue-200">
                     </div>
-                    <div>
+                    {{-- Verwijder het Familienaam veld uit het formulier --}}
+                    {{-- <div>
                         <label class="block text-sm font-semibold mb-1 text-blue-900">Familienaam</label>
                         <input type="text" name="family_name" value="{{ old('family_name', $customer->family_name ?? '') }}" required
                             class="w-full border border-blue-200 rounded px-2 py-1 text-gray-900 focus:ring focus:ring-blue-200">
-                    </div>
+                    </div> --}}
                     <div>
                         <label class="block text-sm font-semibold mb-1 text-blue-900">Straatnaam</label>
                         <input type="text" name="street" value="{{ old('street', $customer->street ?? '') }}" required
@@ -74,11 +86,7 @@
                         <input type="number" name="age" value="{{ old('age', $customer->age ?? '') }}" required
                             class="w-full border border-blue-200 rounded px-2 py-1 text-gray-900 focus:ring focus:ring-blue-200">
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-1 text-blue-900">Klantnummer</label>
-                        <input type="text" name="customer_number" value="{{ old('customer_number', $customer->customer_number ?? '') }}" required
-                            class="w-full border border-blue-200 rounded px-2 py-1 text-gray-900 focus:ring focus:ring-blue-200">
-                    </div>
+                    {{-- Familienaam veld verwijderd uit het formulier --}}
                     <div>
                         <label class="block text-sm font-semibold mb-1 text-blue-900">Wens</label>
                         <input type="text" name="wish" value="{{ old('wish', $customer->wish ?? '') }}"
