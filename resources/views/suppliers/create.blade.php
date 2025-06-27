@@ -45,7 +45,7 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Contactnummer</label>
+                                <label class="form-label">Bedrijf Telefoonnummer</label>
                                 <input type="text" name="contact_number" class="form-control" value="{{ old('contact_number') }}">
                                 @error('contact_number')
                                     <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
