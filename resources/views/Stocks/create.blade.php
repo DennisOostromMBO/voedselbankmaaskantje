@@ -29,12 +29,20 @@
                 <form action="{{ route('stocks.store') }}" method="POST">
                     @csrf
                     @if(session('custom_error'))
-                        <div class="alert alert-danger mb-3">
-                            {{ session('custom_error') }}
                         </div>
                     @endif
                     {{-- Show validation errors --}}
-                    
+                    @if($errors->any())
+                        <div class="alert alert-danger mb-3">
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                                @if($errors->has('delivered_date'))
+                                @endif
+                            </ul>
+                        </div>
+                    @endif
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Categorie</label>

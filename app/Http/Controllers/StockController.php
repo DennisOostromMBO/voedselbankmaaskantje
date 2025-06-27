@@ -109,7 +109,21 @@ class StockController extends Controller
             return back()->withErrors(['category_short_name' => 'Categorie niet gevonden.']);
         }
 
-        $note = trim(($request->input('product_name') ?? '') . ' ' . ($request->input('note') ?? ''));
+        $productName = trim($request->input('product_name') ?? '');
+
+        // Check if a stock with the same product name already exists (in note, first word)
+        $existing = DB::table('stocks')
+            ->whereRaw("TRIM(SUBSTRING_INDEX(note, ' ', 1)) = ?", [$productName])
+            ->exists();
+
+        if ($existing) {
+            return back()
+                ->withErrors(['product_name' => 'Er bestaat al een voorraad met deze productnaam.'])
+                ->withInput()
+                ->with('custom_error', 'Er bestaat al een voorraad met deze productnaam.');
+        }
+
+        $note = trim($productName . ' ' . ($request->input('note') ?? ''));
 
         $quantityInStock = max(0, (int) $request->input('quantity_in_stock'));
         $quantityDelivered = $request->input('quantity_delivered') !== null ? (int) $request->input('quantity_delivered') : 0;
@@ -120,9 +134,9 @@ class StockController extends Controller
         $deliveredDate = $request->input('delivered_date');
         if ($deliveredDate && $receivedDate && $deliveredDate < $receivedDate) {
             return back()
-                ->withErrors(['delivered_date' => 'De leverdatum mag niet vóór de ontvangstdatum liggen.'])
+                ->withErrors(['delivered_date' => 'De leverdatum mag niet voor de ontvangstdatum liggen.'])
                 ->withInput()
-                ->with('custom_error', 'De leverdatum mag niet vóór de ontvangstdatum liggen.');
+                ->with('custom_error', 'De leverdatum mag niet voor de ontvangstdatum liggen.');
         }
 
         DB::statement('CALL create_stocks(?, ?, ?, ?, ?, ?, ?, ?, ?)', [
