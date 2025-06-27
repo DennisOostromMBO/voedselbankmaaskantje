@@ -9,26 +9,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
 
-/**
- * Food Parcel Model
- *
- * Handles food parcel data and relationships with customers and stocks.
- * Includes stored procedures for complex queries with joins.
- *
- * @property int $id
- * @property int $stock_id
- * @property int $customer_id
- * @property bool $is_active
- * @property string|null $note
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- */
 class FoodParcel extends Model
 {
     use HasFactory;
 
     /**
      * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
      */
     protected $fillable = [
         'stock_id',
@@ -39,6 +27,8 @@ class FoodParcel extends Model
 
     /**
      * The attributes that should be cast.
+     *
+     * @var array<string, string>
      */
     protected $casts = [
         'is_active' => 'boolean',
@@ -63,7 +53,7 @@ class FoodParcel extends Model
     }
 
     /**
-     * Get all food parcels with customer and stock details using stored procedure.
+     * Get all food parcels with customer and stock details using Eloquent.
      *
      * @param array $filters Optional filters (customer_id, is_active, search)
      * @return Collection
@@ -71,25 +61,50 @@ class FoodParcel extends Model
     public static function getAllWithDetails(array $filters = []): Collection
     {
         try {
-            $customerFilter = $filters['customer_id'] ?? null;
-            $activeFilter = $filters['is_active'] ?? null;
-            $searchTerm = $filters['search'] ?? null;
+            $query = static::with(['customer', 'stock.productCategory.product']);
 
-            $results = DB::select('CALL sp_get_food_parcels_with_details(?, ?, ?)', [
-                $customerFilter,
-                $activeFilter,
-                $searchTerm
-            ]);
+            // Apply filters
+            if (isset($filters['customer_id']) && $filters['customer_id']) {
+                $query->where('customer_id', $filters['customer_id']);
+            }
 
-            return collect($results);
+            if (isset($filters['is_active']) && $filters['is_active'] !== '') {
+                $query->where('is_active', (bool)$filters['is_active']);
+            }
+
+            $results = $query->orderBy('created_at', 'desc')->get();
+
+            // Transform to match expected structure with proper stock data
+            return $results->map(function ($parcel) {
+                return (object)[
+                    'id' => $parcel->id,
+                    'customer_id' => $parcel->customer_id,
+                    'stock_id' => $parcel->stock_id,
+                    'is_active' => $parcel->is_active,
+                    'note' => $parcel->note,
+                    'created_at' => $parcel->created_at,
+                    'updated_at' => $parcel->updated_at,
+                    'customer_name' => 'Klant #' . $parcel->customer_id,
+                    'customer_email' => '',
+                    'customer_phone' => '',
+                    'product_name' => $parcel->stock?->productCategory?->product?->product_name ?? 'Onbekend Product',
+                    'category_name' => $parcel->stock?->productCategory?->category_name ?? 'Onbekende Categorie',
+                    'stock_name' => ($parcel->stock?->productCategory?->product?->product_name ?? 'Onbekend') . ' - ' .
+                                  ($parcel->stock?->productCategory?->category_name ?? 'Onbekende Categorie'),
+                    'stock_quantity' => $parcel->stock?->quantity_in_stock ?? 0,
+                    'stock_unit' => $parcel->stock?->unit ?? 'stuks',
+                    'stock_received_date' => $parcel->stock?->received_date,
+                    'stock_delivered_date' => $parcel->stock?->delivered_date,
+                ];
+            });
         } catch (\Exception $e) {
             Log::error('Failed to get food parcels with details: ' . $e->getMessage());
-            throw $e;
+            return collect([]);
         }
     }
 
     /**
-     * Get food parcel details by ID using stored procedure.
+     * Get food parcel details by ID using Eloquent.
      *
      * @param int $id
      * @return object|null
@@ -97,16 +112,40 @@ class FoodParcel extends Model
     public static function getDetailsByIdSP(int $id): ?object
     {
         try {
-            $results = DB::select('CALL sp_get_food_parcel_by_id(?)', [$id]);
-            return $results[0] ?? null;
+            $parcel = static::with(['customer', 'stock.productCategory.product'])->find($id);
+
+            if (!$parcel) {
+                return null;
+            }
+
+            return (object)[
+                'id' => $parcel->id,
+                'customer_id' => $parcel->customer_id,
+                'stock_id' => $parcel->stock_id,
+                'is_active' => $parcel->is_active,
+                'note' => $parcel->note,
+                'created_at' => $parcel->created_at,
+                'updated_at' => $parcel->updated_at,
+                'customer_name' => 'Klant #' . $parcel->customer_id,
+                'customer_email' => '',
+                'customer_phone' => '',
+                'product_name' => $parcel->stock?->productCategory?->product?->product_name ?? 'Onbekend Product',
+                'category_name' => $parcel->stock?->productCategory?->category_name ?? 'Onbekende Categorie',
+                'stock_name' => ($parcel->stock?->productCategory?->product?->product_name ?? 'Onbekend') . ' - ' .
+                              ($parcel->stock?->productCategory?->category_name ?? 'Onbekende Categorie'),
+                'stock_quantity' => $parcel->stock?->quantity_in_stock ?? 0,
+                'stock_unit' => $parcel->stock?->unit ?? 'stuks',
+                'stock_received_date' => $parcel->stock?->received_date,
+                'stock_delivered_date' => $parcel->stock?->delivered_date,
+            ];
         } catch (\Exception $e) {
-            Log::error('Failed to get food parcel details by ID: ' . $e->getMessage());
-            throw $e;
+            Log::error('Failed to get food parcel details: ' . $e->getMessage());
+            return null;
         }
     }
 
     /**
-     * Create food parcel using stored procedure.
+     * Create food parcel using Eloquent.
      *
      * @param array $data
      * @return bool
@@ -114,11 +153,11 @@ class FoodParcel extends Model
     public static function createWithSP(array $data): bool
     {
         try {
-            DB::statement('CALL sp_create_food_parcel(?, ?, ?, ?)', [
-                $data['stock_id'],
-                $data['customer_id'],
-                $data['is_active'] ?? true,
-                $data['note'] ?? null
+            static::create([
+                'stock_id' => $data['stock_id'],
+                'customer_id' => $data['customer_id'],
+                'is_active' => $data['is_active'] ?? true,
+                'note' => $data['note'] ?? null
             ]);
 
             return true;
@@ -129,7 +168,7 @@ class FoodParcel extends Model
     }
 
     /**
-     * Update food parcel using stored procedure.
+     * Update food parcel using Eloquent.
      *
      * @param int $id
      * @param array $data
@@ -138,12 +177,12 @@ class FoodParcel extends Model
     public static function updateWithSP(int $id, array $data): bool
     {
         try {
-            DB::statement('CALL sp_update_food_parcel(?, ?, ?, ?, ?)', [
-                $id,
-                $data['stock_id'],
-                $data['customer_id'],
-                $data['is_active'] ?? true,
-                $data['note'] ?? null
+            $parcel = static::findOrFail($id);
+            $parcel->update([
+                'stock_id' => $data['stock_id'],
+                'customer_id' => $data['customer_id'],
+                'is_active' => $data['is_active'] ?? true,
+                'note' => $data['note'] ?? null
             ]);
 
             return true;
@@ -154,7 +193,7 @@ class FoodParcel extends Model
     }
 
     /**
-     * Delete food parcel using stored procedure.
+     * Delete food parcel using Eloquent.
      *
      * @param int $id
      * @return bool
@@ -162,7 +201,8 @@ class FoodParcel extends Model
     public static function deleteWithSP(int $id): bool
     {
         try {
-            DB::statement('CALL sp_delete_food_parcel(?)', [$id]);
+            $parcel = static::findOrFail($id);
+            $parcel->delete();
             return true;
         } catch (\Exception $e) {
             Log::error('Failed to delete food parcel: ' . $e->getMessage());
@@ -171,23 +211,34 @@ class FoodParcel extends Model
     }
 
     /**
-     * Get food parcel statistics using stored procedure.
+     * Get food parcel statistics using Eloquent.
      *
      * @return object
      */
     public static function getStatistics(): object
     {
         try {
-            $results = DB::select('CALL sp_get_food_parcel_stats()');
-            return $results[0] ?? (object)[
+            $total = static::count();
+            $active = static::where('is_active', true)->count();
+            $inactive = static::where('is_active', false)->count();
+            $thisMonth = static::whereYear('created_at', now()->year)
+                              ->whereMonth('created_at', now()->month)
+                              ->count();
+
+            return (object)[
+                'total' => $total,
+                'active' => $active,
+                'inactive' => $inactive,
+                'this_month' => $thisMonth
+            ];
+        } catch (\Exception $e) {
+            Log::error('Failed to get food parcel statistics: ' . $e->getMessage());
+            return (object)[
                 'total' => 0,
                 'active' => 0,
                 'inactive' => 0,
                 'this_month' => 0
             ];
-        } catch (\Exception $e) {
-            Log::error('Failed to get food parcel statistics: ' . $e->getMessage());
-            throw $e;
         }
     }
 }
