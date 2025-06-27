@@ -62,7 +62,6 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th><i class="fas fa-hashtag"></i> ID</th>
                                 <th><i class="fas fa-truck"></i> Naam</th>
                                 <th><i class="fas fa-phone"></i> Contactnummer</th>
                                 <th><i class="fas fa-envelope"></i> E-mail</th>
@@ -74,7 +73,6 @@
                         <tbody>
                         @forelse($suppliers as $supplier)
                             <tr>
-                                <td>{{ $supplier->id }}</td>
                                 <td>
                                     <div class="d-flex align-center gap-1">
                                         <i class="fas fa-truck" style="color: var(--primary-color);"></i>
@@ -109,7 +107,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center text-[#4b5563]">Geen leveranciers gevonden.</td>
+                                <td colspan="6" class="text-center text-[#4b5563]">Geen leveranciers gevonden.</td>
                             </tr>
                         @endforelse
                         </tbody>

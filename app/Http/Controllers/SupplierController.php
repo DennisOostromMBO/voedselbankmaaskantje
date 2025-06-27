@@ -10,7 +10,15 @@ class SupplierController extends Controller
 {
     public function index(Request $request)
     {
-        $allSuppliers = Supplier::getAllWithContacts(); // returns array
+        try {
+            $allSuppliers = Supplier::getAllWithContacts(); // returns array
+
+            if (!$allSuppliers || count($allSuppliers) === 0) {
+                $allSuppliers = [];
+            }
+        } catch (\Throwable $e) {
+            $allSuppliers = [];
+        }
 
         $perPage = 2;
         $currentPage = $request->input('page', 1);
