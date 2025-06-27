@@ -12,8 +12,7 @@ class SupplierController extends Controller
     public function index(Request $request)
     {
         try {
-            $allSuppliers = Supplier::getAllWithContacts(); // returns array
-
+            $allSuppliers = Supplier::getAllWithContacts();
             if (!$allSuppliers || count($allSuppliers) === 0) {
                 $allSuppliers = [];
             }
@@ -52,19 +51,7 @@ class SupplierController extends Controller
     {
         $validated = $request->validated();
 
-        \DB::statement('CALL create_supplier(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-            $validated['supplier_name'],
-            $validated['contact_number'] ?? null,
-            $validated['is_active'],
-            $validated['note'] ?? null,
-            $validated['email'] ?? null,
-            $validated['street'] ?? null,
-            $validated['house_number'] ?? null,
-            $validated['addition'] ?? null,
-            $validated['postcode'] ?? null,
-            $validated['city'] ?? null,
-            $validated['mobile'] ?? null,
-        ]);
+        Supplier::createFromSP($validated);
 
         return redirect()->route('suppliers.index')->with('success', 'Leverancier succesvol toegevoegd.');
     }
@@ -100,20 +87,7 @@ class SupplierController extends Controller
 
         $validated = $request->validated();
 
-        \DB::statement('CALL update_supplier(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-            $id,
-            $validated['supplier_name'],
-            $validated['contact_number'],
-            $validated['is_active'],
-            $validated['note'] ?? null,
-            $validated['email'],
-            $validated['street'],
-            $validated['house_number'],
-            $validated['addition'],
-            $validated['postcode'],
-            $validated['city'],
-            $validated['mobile'],
-        ]);
+        Supplier::updateFromSP($id, $validated);
 
         return redirect()->route('suppliers.index')->with('success', 'Leverancier succesvol bijgewerkt.');
     }
@@ -121,8 +95,7 @@ class SupplierController extends Controller
     public function destroy($id)
     {
         $result = null;
-        \DB::statement('CALL delete_supplier(?, @result)', [$id]);
-        $result = \DB::select('SELECT @result as result')[0]->result;
+        Supplier::deleteFromSP($id, $result);
 
         if ($result === 'success') {
             return redirect()->route('suppliers.index')->with('success', 'Leverancier succesvol verwijderd.');
@@ -131,5 +104,6 @@ class SupplierController extends Controller
         }
     }
 }
+          
 
 

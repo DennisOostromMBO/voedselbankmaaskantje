@@ -10,7 +10,8 @@ CREATE PROCEDURE update_supplier(
     IN p_addition VARCHAR(5),
     IN p_postcode VARCHAR(6),
     IN p_city VARCHAR(50),
-    IN p_mobile VARCHAR(10)
+    IN p_mobile VARCHAR(10),
+    IN p_upcoming_delivery_at DATETIME
 )
 BEGIN
     UPDATE suppliers
@@ -19,6 +20,7 @@ BEGIN
         contact_number = p_contact_number,
         is_active = p_is_active,
         note = p_note,
+        upcoming_delivery_at = p_upcoming_delivery_at,
         updated_at = NOW()
     WHERE id = p_id;
 

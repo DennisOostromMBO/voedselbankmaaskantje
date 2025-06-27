@@ -75,6 +75,14 @@
                                     <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
+                            <div class="form-group mt-4">
+                                <label class="form-label">Volgende levering (datum en tijd)</label>
+                                <input type="datetime-local" name="upcoming_delivery_at" class="form-control"
+                                    value="{{ old('upcoming_delivery_at') }}">
+                                @error('upcoming_delivery_at')
+                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
                         <!-- Address/Contact Info (right) -->
                         <div>

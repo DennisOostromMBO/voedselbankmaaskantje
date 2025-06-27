@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class SupplierSeeder extends Seeder
 {
@@ -22,7 +23,7 @@ class SupplierSeeder extends Seeder
                 'supplier_name' => 'Drinks Supplier B',
                 'contact_number' => '0687654321',
                 'is_active' => true,
-                'upcoming_delivery_at' => now()->addDays(2),
+                'upcoming_delivery_at' => Carbon::now()->addDays(2)->toDateTimeString(),
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -30,7 +31,7 @@ class SupplierSeeder extends Seeder
                 'supplier_name' => 'Bakery C',
                 'contact_number' => '0611122233',
                 'is_active' => true,
-                'upcoming_delivery_at' => now()->addDays(5),
+                'upcoming_delivery_at' => Carbon::now()->addDays(5)->toDateTimeString(),
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -46,7 +47,7 @@ class SupplierSeeder extends Seeder
                 'supplier_name' => 'Meat Supplier E',
                 'contact_number' => '0633344455',
                 'is_active' => true,
-                'upcoming_delivery_at' => now()->addDays(1),
+                'upcoming_delivery_at' => Carbon::now()->addDays(1)->toDateTimeString(),
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -62,7 +63,7 @@ class SupplierSeeder extends Seeder
                 'supplier_name' => 'Fish Supplier G',
                 'contact_number' => '0655566677',
                 'is_active' => true,
-                'upcoming_delivery_at' => now()->addDays(3),
+                'upcoming_delivery_at' => Carbon::now()->addDays(3)->toDateTimeString(),
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

@@ -39,7 +39,7 @@
                     <span class="font-semibold">Volgende levering:</span>
                     <span>
                         @if(!empty($supplier->upcoming_delivery_at))
-                            {{ \Carbon\Carbon::parse($supplier->upcoming_delivery_at)->format('d-m-Y') }}
+                            {{ \Carbon\Carbon::parse($supplier->upcoming_delivery_at)->format('d-m-Y H:i') }}
                         @else
                             Geen gepland
                         @endif
