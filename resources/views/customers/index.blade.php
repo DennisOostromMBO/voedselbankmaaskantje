@@ -57,11 +57,24 @@
                             </td>
                             <td class="px-2 py-1">
                                 <button class="bg-orange-400 hover:bg-orange-500 text-white px-1 py-0.5 rounded text-xs" title="Bewerken">✏️</button>
-                                <form action="{{ route('customers.destroy', $customer->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-1 py-0.5 rounded text-xs" title="Verwijderen" onclick="return confirm('Weet je zeker dat je deze klant wilt verwijderen?')">🗑️</button>
-                                </form>
+                                @if(empty($customer->has_food_parcel) || !$customer->has_food_parcel)
+                                    <button
+                                        class="bg-gray-300 text-gray-500 px-1 py-0.5 rounded text-xs cursor-not-allowed"
+                                        title="Kan niet verwijderen omdat deze klant niet gekoppeld is aan een voedselpakket"
+                                        disabled
+                                    >🗑️</button>
+                                @else
+                                    <form action="{{ route('customers.destroy', $customer->id) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button
+                                            type="submit"
+                                            class="bg-red-500 hover:bg-red-600 text-white px-1 py-0.5 rounded text-xs"
+                                            title="Verwijderen"
+                                            onclick="return confirm('Weet je zeker dat je deze klant wilt verwijderen?')"
+                                        >🗑️</button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
