@@ -16,8 +16,12 @@ class StockController extends Controller
     
     public function index()
     {
-        $stocks = DB::select('CALL get_all_stocks()');
-        return view('Stocks.Index', compact('stocks'));
+        try {
+            $stocks = DB::select('CALL get_all_stocks()');
+            return view('Stocks.Index', compact('stocks'));
+        } catch (\Exception $e) {
+            return back()->with('custom_error', 'Fout bij ophalen van de voorraad: ' . $e->getMessage());
+        }
     }
     public function create()
     {
