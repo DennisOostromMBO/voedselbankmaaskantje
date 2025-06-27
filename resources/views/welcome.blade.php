@@ -7,21 +7,10 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-[#f8fafc] min-h-screen flex flex-col font-sans">
-    <header class="w-full bg-gradient-to-r from-[#3b82f6] to-[#2563eb] py-8 shadow-lg">
-        <div class="container mx-auto px-8 flex flex-col md:flex-row items-center justify-between">
-            <div class="flex items-center gap-4">
-                <span class="text-3xl md:text-4xl font-bold text-white drop-shadow">Voedselbank Maaskantje</span>
-            </div>
-            <div class="mt-4 md:mt-0">
-                <a href="{{ route('login') }}"
-                   class="inline-block bg-gradient-to-r from-[#f53003] to-[#dc2626] text-white font-semibold rounded-lg px-8 py-3 shadow hover:from-[#d42a00] hover:to-[#b91c1c] transition text-lg">
-                    Inloggen
-                </a>
-            </div>
-        </div>
-    </header>
+    @include('components.navbar')
     <main class="flex-1 flex flex-col items-center justify-center">
         <section class="w-full max-w-5xl mx-auto px-4 py-16 flex flex-col md:flex-row gap-12 items-center">
             <div class="flex-1 text-center md:text-left">
@@ -57,4 +46,4 @@
     </footer>
 </body>
 </html>
-</html>
+        
