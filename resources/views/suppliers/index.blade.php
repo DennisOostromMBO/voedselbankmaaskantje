@@ -115,18 +115,14 @@
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Pagination (styled like example) -->
+                <!-- Pagination -->
                 <div class="pagination flex justify-center items-center gap-2 mt-6">
-                    {{ $suppliers->onEachSide(1)->links('vendor.pagination.custom') }}
+                    {{ $suppliers->links('vendor.pagination.custom') }}
                 </div>
             </div>
         </div>
     </main>
 </body>
 </html>
-        </div>
-    </main>
-</body>
-</html>
+
 
