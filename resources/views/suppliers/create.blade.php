@@ -13,70 +13,120 @@
 
     <main class="main-content flex-1 w-full">
         <div class="container mx-auto px-4 py-10">
-            <div class="card max-w-xl mx-auto">
-                <div class="card-header">
+            <div class="card max-w-5xl mx-auto">
+                <div class="card-header flex flex-col md:flex-row md:items-center md:justify-between">
                     <h1 class="card-title flex items-center gap-2">
                         <i class="fas fa-truck"></i>
                         Nieuwe Leverancier
                     </h1>
-                    <a href="{{ route('suppliers.index') }}" class="btn btn-secondary btn-sm">
+                    <a href="{{ route('suppliers.index') }}" class="btn btn-secondary btn-sm mt-4 md:mt-0">
                         <i class="fas fa-arrow-left"></i> Terug naar overzicht
                     </a>
                 </div>
+                @if ($errors->any())
+                    <div class="alert alert-danger mb-4">
+                        <ul class="list-disc list-inside text-left text-red-700">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <form action="{{ route('suppliers.store') }}" method="POST" class="mt-6">
                     @csrf
-                    <div class="form-group">
-                        <label class="form-label">Naam leverancier *</label>
-                        <input type="text" name="supplier_name" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Contactnummer</label>
-                        <input type="text" name="contact_number" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">E-mail</label>
-                        <input type="email" name="email" class="form-control">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Straat</label>
-                            <input type="text" name="street" class="form-control">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Supplier Info (left) -->
+                        <div>
+                            <div class="form-group">
+                                <label class="form-label">Naam leverancier *</label>
+                                <input type="text" name="supplier_name" class="form-control" value="{{ old('supplier_name') }}" required>
+                                @error('supplier_name')
+                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Contactnummer</label>
+                                <input type="text" name="contact_number" class="form-control" value="{{ old('contact_number') }}">
+                                @error('contact_number')
+                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">E-mail</label>
+                                <input type="email" name="email" class="form-control" value="{{ old('email') }}">
+                                @error('email')
+                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Actief</label>
+                                <select name="is_active" class="form-control form-select">
+                                    <option value="1" @if(old('is_active')=='1') selected @endif>Ja</option>
+                                    <option value="0" @if(old('is_active')=='0') selected @endif>Nee</option>
+                                </select>
+                                @error('is_active')
+                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Notitie</label>
+                                <textarea name="note" class="form-control">{{ old('note') }}</textarea>
+                                @error('note')
+                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Huisnummer</label>
-                            <input type="text" name="house_number" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Toevoeging</label>
-                            <input type="text" name="addition" class="form-control">
+                        <!-- Address/Contact Info (right) -->
+                        <div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Straat</label>
+                                    <input type="text" name="street" class="form-control" value="{{ old('street') }}">
+                                    @error('street')
+                                        <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Huisnummer</label>
+                                    <input type="text" name="house_number" class="form-control" value="{{ old('house_number') }}">
+                                    @error('house_number')
+                                        <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Toevoeging</label>
+                                    <input type="text" name="addition" class="form-control" value="{{ old('addition') }}">
+                                    @error('addition')
+                                        <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Postcode</label>
+                                    <input type="text" name="postcode" class="form-control" value="{{ old('postcode') }}">
+                                    @error('postcode')
+                                        <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Plaats</label>
+                                    <input type="text" name="city" class="form-control" value="{{ old('city') }}">
+                                    @error('city')
+                                        <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Mobiel</label>
+                                    <input type="text" name="mobile" class="form-control" value="{{ old('mobile') }}">
+                                    @error('mobile')
+                                        <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Postcode</label>
-                            <input type="text" name="postcode" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Plaats</label>
-                            <input type="text" name="city" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Mobiel</label>
-                            <input type="text" name="mobile" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Actief</label>
-                        <select name="is_active" class="form-control form-select">
-                            <option value="1">Ja</option>
-                            <option value="0">Nee</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Notitie</label>
-                        <textarea name="note" class="form-control"></textarea>
-                    </div>
-                    <div class="btn-group mt-4">
+                    <div class="btn-group mt-8">
                         <button type="submit" class="btn btn-success">
                             <i class="fas fa-save"></i> Opslaan
                         </button>
