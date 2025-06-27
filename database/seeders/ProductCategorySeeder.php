@@ -5,70 +5,70 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class SupplierSeeder extends Seeder
+class ProductCategorySeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('suppliers')->insert([
+        DB::table('product_categories')->insert([
             [
-                'supplier_name' => 'Food Supplier A',
-                'contact_number' => '0612345678',
+                'product_id' => 1,
+                'category_name' => 'Aardappels, Groenten en Fruit',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'supplier_name' => 'Drinks Supplier B',
-                'contact_number' => '0687654321',
+                'product_id' => 2,
+                'category_name' => 'Kaas en vleeswaren',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'supplier_name' => 'Bakery C',
-                'contact_number' => '0611122233',
+                'product_id' => 3,
+                'category_name' => 'Zuivel, plantaardig en eieren',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'supplier_name' => 'Vegetable D',
-                'contact_number' => '0622233344',
+                'product_id' => 4,
+                'category_name' => 'Bakkerij en banket',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'supplier_name' => 'Meat Supplier E',
-                'contact_number' => '0633344455',
+                'product_id' => 5,
+                'category_name' => 'Frisdank, sappen, koffie en thee',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'supplier_name' => 'Fruit Supplier F',
-                'contact_number' => '0644455566',
+                'product_id' => 6,
+                'category_name' => 'Pasta, rijst en wereldkeuken',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'supplier_name' => 'Fish Supplier G',
-                'contact_number' => '0655566677',
+                'product_id' => 7,
+                'category_name' => 'Soepen, sausen, kruiden en olie',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'supplier_name' => 'Frozen Supplier H',
-                'contact_number' => '0666677788',
+                'product_id' => 8,
+                'category_name' => 'Snoep, koek, chips en chocolade',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'supplier_name' => 'Canned Supplier I',
-                'contact_number' => '0677788899',
+                'product_id' => 9,
+                'category_name' => 'Baby, verzorging en hygiëne',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),

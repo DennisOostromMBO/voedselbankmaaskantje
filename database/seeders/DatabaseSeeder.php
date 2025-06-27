@@ -23,9 +23,10 @@ class DatabaseSeeder extends Seeder
             SupplierSeeder::class,
             ContactSeeder::class,
             WishSeeder::class,
-            RoleSeeder::class,
             VolunteerSeeder::class,
             EmployeeSeeder::class,
+            ProductSeeder::class,
+            ProductCategorySeeder::class,
         ]);
     }
 }
