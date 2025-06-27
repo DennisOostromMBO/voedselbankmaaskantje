@@ -28,7 +28,14 @@ class Stock extends Model
         {
             return DB::select('CALL create_stocks()');
         }
-
+    public static function updateStocks()
+        {
+            return DB::select('CALL update_stocks()');
+        }
+    public static function destroyStocks(int $id)
+    {
+        return DB::select('CALL destroy_stocks(?)', [$id]);
+    }
     /**
      * The attributes that are mass assignable.
      *

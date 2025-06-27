@@ -34,7 +34,17 @@
                         </div>
                     @endif
                     {{-- Show validation errors --}}
-                    
+                    @if($errors->any())
+                        <div class="alert alert-danger mb-3">
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                                @if($errors->has('delivered_date'))
+                                @endif
+                            </ul>
+                        </div>
+                    @endif
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Categorie</label>
@@ -47,7 +57,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Product</label>
-                            <input type="text" name="product_name" class="form-control" required placeholder="Voer productnaam in">
+                            <input type="text" name="product_name" class="form-control" required placeholder="Voer productnaam in" pattern="^[A-Za-zÀ-ÿ\s]+$" title="Alleen letters en spaties zijn toegestaan" oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '')">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Eenheid</label>

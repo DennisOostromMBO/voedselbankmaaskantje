@@ -1,37 +1,13 @@
-<!-- Custom Application Navbar -->
-<header class="header">
-    <nav class="navbar container">
-        <a href="{{ route('dashboard') }}" class="logo">
-            <i class="fas fa-utensils"></i>
-            Voedselbank Maaskantje
-        </a>
-
-        <!-- Hamburger Menu Button -->
-        <button class="hamburger" id="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-
-        <ul class="nav-links" id="navLinks">
-            <li><a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li><a href="#" class="nav-link"><i class="fas fa-users"></i> Klanten</a></li>
-            <li><a href="{{ route('food-parcels.index') }}" class="nav-link {{ request()->routeIs('food-parcels.*') ? 'active' : '' }}"><i class="fas fa-box"></i> Voedselpakketten</a></li>
-            <li><a href="#" class="nav-link"><i class="fas fa-warehouse"></i> Voorraad</a></li>
-            <li><a href="#" class="nav-link"><i class="fas fa-truck"></i> Leveranciers</a></li>
-            @auth
-                <li><a href="{{ route('profile.edit') }}" class="nav-link"><i class="fas fa-user-circle"></i> Profiel</a></li>
-                <li>
-                    <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                        @csrf
-                        <a href="{{ route('logout') }}" class="nav-link" onclick="event.preventDefault(); this.closest('form').submit();">
-                            <i class="fas fa-sign-out-alt"></i> Uitloggen
-                        </a>
-                    </form>
-                </li>
-            @else
-                <li><a href="{{ route('login') }}" class="nav-link"><i class="fas fa-sign-in-alt"></i> Inloggen</a></li>
-            @endauth
+<nav class="w-full bg-[#2563eb]">
+    <div class="container mx-auto px-8 flex flex-col md:flex-row items-center justify-between py-4">
+        <span class="text-3xl md:text-4xl font-bold text-white drop-shadow">Voedselbank Maaskantje</span>
+        <ul class="nav-links flex gap-4 mt-4 md:mt-0">
+            <li><a href="/" class="nav-link active flex items-center gap-2 text-white"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="/customers" class="nav-link flex items-center gap-2 text-white"><i class="fas fa-users"></i> Customers</a></li>
+            <li><a href="#" class="nav-link flex items-center gap-2 text-white"><i class="fas fa-box"></i> Food Parcels</a></li>
+            <li><a href="/stocks" class="nav-link flex items-center gap-2 text-white"><i class="fas fa-warehouse"></i> Stock</a></li>
+            <li><a href="/suppliers" class="nav-link flex items-center gap-2 text-white"><i class="fas fa-truck"></i> Suppliers</a></li>
+            <li><a href="#" class="nav-link flex items-center gap-2 text-white"><i class="fas fa-user-circle"></i> Profile</a></li>
         </ul>
     </nav>
 </header>
