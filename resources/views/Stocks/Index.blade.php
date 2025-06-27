@@ -10,15 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <header class="header no-print">
-        <nav class="navbar container">
-            <a href="#" class="logo">Voedselbank Maaskantje</a>
-            <ul class="nav-links">
-                <li><a href="#" class="nav-link active">Dashboard</a></li>
-                <li><a href="#" class="nav-link">Stocks</a></li>
-            </ul>
-        </nav>
-    </header>
     <main class="main-content">
         <div class="container">
             <div class="card">
@@ -33,6 +24,16 @@
                         </a>
                     </div>
                 </div>
+                @if(session('custom_error'))
+                    <div class="alert alert-danger text-center mb-4">
+                        {{ session('custom_error') }}
+                    </div>
+                @endif
+                @if(session('success'))
+                    <div class="alert alert-success text-center mb-4">
+                        {{ session('success') }}
+                    </div>
+                @endif
                 <div class="table-container">
                     @if(count($stocks) === 0)
                         <div class="alert alert-danger text-center mb-4">
@@ -51,6 +52,7 @@
                                 <th>Voorraad</th>
                                 <th>Geleverd</th>
                                 <th>Uitgedeeld</th>
+                                <th>Acties</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,6 +77,16 @@
                                     <td>{{ $stock->quantity_in_stock }}</td>
                                     <td>{{ $stock->quantity_delivered }}</td>
                                     <td>{{ $stock->quantity_supplied }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ route('stocks.edit', $stock->id) }}" class="btn btn-warning btn-sm">Update</a>
+                                            <form action="{{ route('stocks.destroy', $stock->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Weet je zeker dat je deze voorraad wilt verwijderen?')">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

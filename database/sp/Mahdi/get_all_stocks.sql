@@ -1,4 +1,4 @@
-DELIMITER //
+
 
 CREATE PROCEDURE get_all_stocks()
 BEGIN
@@ -23,6 +23,4 @@ BEGIN
     FROM stocks s
     LEFT JOIN product_categories pc ON pc.id = s.product_category_id
     LEFT JOIN products p ON p.id = pc.product_id;
-END //
-
-DELIMITER ;
+END;
