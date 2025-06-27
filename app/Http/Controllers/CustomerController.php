@@ -46,17 +46,16 @@ class CustomerController extends Controller
             'age'             => 'required|integer',
             'wish'            => 'nullable|string|max:255',
         ]);
-        // Controleer uniekheid van mobiel en email in contacts, behalve voor deze klant
+
+        // Uniekheid check (behalve voor deze klant)
         $emailExists = DB::table('contacts')
             ->where('email', $validatedData['email'])
             ->where('customer_id', '!=', $id)
             ->exists();
-
         $mobileExists = DB::table('contacts')
             ->where('mobile', $validatedData['mobile'])
             ->where('customer_id', '!=', $id)
             ->exists();
-
         $errors = [];
         if ($emailExists) {
             $errors['email'] = 'Let op! Dit e-mailadres is al in gebruik door een andere klant!';
@@ -68,26 +67,24 @@ class CustomerController extends Controller
             return back()->withInput()->withErrors($errors);
         }
 
-        try {
-            $affected = DB::statement('CALL spEditCustomer(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-                $id,
-                $validatedData['first_name'],
-                $validatedData['infix'] ?? '',
-                $validatedData['last_name'],
-                $validatedData['street'],
-                $validatedData['house_number'],
-                $validatedData['addition'] ?? '',
-                $validatedData['postcode'],
-                $validatedData['city'],
-                $validatedData['mobile'],
-                $validatedData['email'],
-                $validatedData['age'],
-                $validatedData['wish'] ?? ''
-            ]);
-            return redirect()->route('customers.index')->with('success', 'Klant bijgewerkt!');
-        } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Fout: ' . $e->getMessage());
-        }
+        // Roep de SP aan voor bijwerken (zie spEditCustomers.sql)
+        DB::statement('CALL spEditCustomer(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+            $id,
+            $validatedData['first_name'],
+            $validatedData['infix'] ?? '',
+            $validatedData['last_name'],
+            $validatedData['street'],
+            $validatedData['house_number'],
+            $validatedData['addition'] ?? '',
+            $validatedData['postcode'],
+            $validatedData['city'],
+            $validatedData['mobile'],
+            $validatedData['email'],
+            $validatedData['age'],
+            $validatedData['wish'] ?? ''
+        ]);
+
+        return redirect()->route('customers.index')->with('success', 'Klant succesvol bijgewerkt!');
     }
 
     public function create()

@@ -14,6 +14,7 @@ return new class extends Migration
         DB::unprepared('DROP PROCEDURE IF EXISTS spGetCustomerById');
         DB::unprepared('DROP PROCEDURE IF EXISTS spEditCustomer');
         DB::unprepared('DROP PROCEDURE IF EXISTS spCreateCustomers');
+        DB::unprepared('DROP PROCEDURE IF EXISTS spEditCustomers');
 
         // Procedures aanmaken vanuit SQL-bestanden
         $pathGetAll = database_path('sp/Dennis/spGetAllCustomers.sql');
@@ -27,6 +28,9 @@ return new class extends Migration
 
         $pathGetById = database_path('sp/Dennis/spCreateCustomers.sql');
         DB::unprepared(File::get($pathGetById));
+
+         $pathGetById = database_path('sp/Dennis/spEditCustomers.sql');
+        DB::unprepared(File::get($pathGetById));
     }
 
     public function down(): void
@@ -36,5 +40,6 @@ return new class extends Migration
         DB::unprepared('DROP PROCEDURE IF EXISTS spGetCustomerById');
         DB::unprepared('DROP PROCEDURE IF EXISTS spEditCustomer');
         DB::unprepared('DROP PROCEDURE IF EXISTS spCreateCustomer');
+        DB::unprepared('DROP PROCEDURE IF EXISTS spEditCustomers');
     }
 };
