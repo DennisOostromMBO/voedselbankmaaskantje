@@ -27,6 +27,9 @@ class DatabaseSeeder extends Seeder
             EmployeeSeeder::class,
             ProductSeeder::class,
             ProductCategorySeeder::class,
+            StockSeeder::class,
+            FoodParcelSeeder::class,
+            CollectedParcelSeeder::class,
         ]);
     }
 }
