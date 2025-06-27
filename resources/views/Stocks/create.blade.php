@@ -28,6 +28,13 @@
                 </div>
                 <form action="{{ route('stocks.store') }}" method="POST">
                     @csrf
+                    @if(session('custom_error'))
+                        <div class="alert alert-danger mb-3">
+                            {{ session('custom_error') }}
+                        </div>
+                    @endif
+                    {{-- Show validation errors --}}
+                    
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Categorie</label>
@@ -59,15 +66,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Aantal Op Voorad</label>
-                            <input type="number" name="quantity_in_stock" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Aantal Uigegeven</label>
-                            <input type="number" name="quantity_delivered" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Aantal Bijgeleverd</label>
-                            <input type="number" name="quantity_supplied" class="form-control" required>
+                            <input type="number" name="quantity_in_stock" class="form-control" required min="0">
                         </div>
                         <!-- Set is_active always to 1 (Ja) and hide the field -->
                         <input type="hidden" name="is_active" value="1">

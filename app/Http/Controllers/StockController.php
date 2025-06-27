@@ -111,16 +111,30 @@ class StockController extends Controller
 
         $note = trim(($request->input('product_name') ?? '') . ' ' . ($request->input('note') ?? ''));
 
+        $quantityInStock = max(0, (int) $request->input('quantity_in_stock'));
+        $quantityDelivered = $request->input('quantity_delivered') !== null ? (int) $request->input('quantity_delivered') : 0;
+        $quantitySupplied = $request->input('quantity_supplied') !== null ? (int) $request->input('quantity_supplied') : 0;
+
+        // Validate delivered_date is not before received_date
+        $receivedDate = $request->input('received_date');
+        $deliveredDate = $request->input('delivered_date');
+        if ($deliveredDate && $receivedDate && $deliveredDate < $receivedDate) {
+            return back()
+                ->withErrors(['delivered_date' => 'De leverdatum mag niet vóór de ontvangstdatum liggen.'])
+                ->withInput()
+                ->with('custom_error', 'De leverdatum mag niet vóór de ontvangstdatum liggen.');
+        }
+
         DB::statement('CALL create_stocks(?, ?, ?, ?, ?, ?, ?, ?, ?)', [
             $category_id,
             $request->input('is_active'),
             $note,
-            $request->input('received_date'),
-            $request->input('delivered_date'),
+            $receivedDate,
+            $deliveredDate,
             $request->input('unit'),
-            $request->input('quantity_in_stock'),
-            $request->input('quantity_delivered'),
-            $request->input('quantity_supplied'),
+            $quantityInStock,
+            $quantityDelivered,
+            $quantitySupplied,
         ]);
         return redirect()->route('stocks.index')->with('success', 'Stock created successfully.');
     }

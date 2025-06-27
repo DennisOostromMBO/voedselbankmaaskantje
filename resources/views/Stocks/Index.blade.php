@@ -42,29 +42,39 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Product Name</th>
-                                <th>Category</th>
-                                <th>Number</th>
-                                <th>Ontvangdatum</th>
-                                <th>Uigeleverddatum</th>
+                                <th>Productnaam</th>
+                                <th>Categorie</th>
+                                <th>Nummer</th>
+                                <th>Ontvangstdatum</th>
+                                <th>Leverdatum</th>
                                 <th>Eenheid</th>
-                                <th>Aantal Op Voorad</th>
-                                <th>Aantal Uigegeven</th>
-                                <th>Aantal Bijgeleverd</th>
+                                <th>Voorraad</th>
+                                <th>Geleverd</th>
+                                <th>Uitgedeeld</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($stocks as $stock)
                                 <tr>
-                                    <td>{{ $stock->product_name }}</td>
+                                    <td>
+                                        @php
+                                            // Always show the first word from note (typed product name), fallback to joined product_name
+                                            $typedProduct = '';
+                                            if (!empty($stock->note)) {
+                                                $typedProduct = trim(explode(' ', $stock->note)[0]);
+                                            }
+                                            $displayProduct = $typedProduct ?: $stock->product_name;
+                                        @endphp
+                                        {{ $displayProduct }}
+                                    </td>
                                     <td>{{ $stock->category_name }}</td>
                                     <td>{{ $stock->number }}</td>
-                                    <td>{{ $stock->ontvangdatum }}</td>
-                                    <td>{{ $stock->uigeleverddatum }}</td>
-                                    <td>{{ $stock->eenheid }}</td>
-                                    <td>{{ $stock->aantalOpVoorad }}</td>
-                                    <td>{{ $stock->aantalUigegeven }}</td>
-                                    <td>{{ $stock->aantalBijgeleverd }}</td>
+                                    <td>{{ $stock->received_date }}</td>
+                                    <td>{{ $stock->delivered_date }}</td>
+                                    <td>{{ $stock->unit }}</td>
+                                    <td>{{ $stock->quantity_in_stock }}</td>
+                                    <td>{{ $stock->quantity_delivered }}</td>
+                                    <td>{{ $stock->quantity_supplied }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
