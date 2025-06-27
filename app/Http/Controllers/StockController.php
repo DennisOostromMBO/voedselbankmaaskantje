@@ -16,8 +16,12 @@ class StockController extends Controller
     
     public function index()
     {
-        $stocks = DB::select('CALL get_all_stocks()');
-        return view('Stocks.Index', compact('stocks'));
+        try {
+            $stocks = DB::select('CALL get_all_stocks()');
+            return view('Stocks.Index', compact('stocks'));
+        } catch (\Exception $e) {
+            return back()->with('custom_error', 'Fout bij ophalen van de voorraad: ' . $e->getMessage());
+        }
     }
     public function create()
     {
@@ -78,6 +82,11 @@ class StockController extends Controller
     
     public function store(Request $request)
     {
+        // Validate product_name: only letters (allow spaces and accents)
+        $request->validate([
+            'product_name' => ['required', 'regex:/^[\pL\s]+$/u'],
+            // ...other validations if needed...
+        ]);
         // Map short name to category id in PHP
         $categoriesRaw = \DB::table('product_categories')
             ->select('id', 'category_name')
@@ -109,7 +118,21 @@ class StockController extends Controller
             return back()->withErrors(['category_short_name' => 'Categorie niet gevonden.']);
         }
 
-        $note = trim(($request->input('product_name') ?? '') . ' ' . ($request->input('note') ?? ''));
+        $productName = trim($request->input('product_name') ?? '');
+
+        // Check if a stock with the same product name already exists (in note, first word)
+        $existing = DB::table('stocks')
+            ->whereRaw("TRIM(SUBSTRING_INDEX(note, ' ', 1)) = ?", [$productName])
+            ->exists();
+
+        if ($existing) {
+            return back()
+                ->withErrors(['product_name' => 'Er bestaat al een voorraad met deze productnaam.'])
+                ->withInput()
+                ->with('custom_error', 'Er bestaat al een voorraad met deze productnaam.');
+        }
+
+        $note = trim($productName . ' ' . ($request->input('note') ?? ''));
 
         $quantityInStock = max(0, (int) $request->input('quantity_in_stock'));
         $quantityDelivered = $request->input('quantity_delivered') !== null ? (int) $request->input('quantity_delivered') : 0;
@@ -120,9 +143,9 @@ class StockController extends Controller
         $deliveredDate = $request->input('delivered_date');
         if ($deliveredDate && $receivedDate && $deliveredDate < $receivedDate) {
             return back()
-                ->withErrors(['delivered_date' => 'De leverdatum mag niet vóór de ontvangstdatum liggen.'])
+                ->withErrors(['delivered_date' => 'De leverdatum mag niet voor de ontvangstdatum liggen.'])
                 ->withInput()
-                ->with('custom_error', 'De leverdatum mag niet vóór de ontvangstdatum liggen.');
+                ->with('custom_error', 'De leverdatum mag niet voor de ontvangstdatum liggen.');
         }
 
         DB::statement('CALL create_stocks(?, ?, ?, ?, ?, ?, ?, ?, ?)', [
@@ -137,5 +160,78 @@ class StockController extends Controller
             $quantitySupplied,
         ]);
         return redirect()->route('stocks.index')->with('success', 'Stock created successfully.');
+    }
+
+    public function updateQuantities(Request $request, $id)
+    {
+        $request->validate([
+            'quantity_in_stock' => 'required|integer|min:0',
+            'quantity_delivered' => 'nullable|integer|min:0',
+            'quantity_supplied' => 'nullable|integer|min:0',
+        ]);
+
+        // Get the current stock
+        $stock = DB::table('stocks')->where('id', $id)->first();
+        if (!$stock) {
+            return back()->withErrors(['stock' => 'Stock not found.']);
+        }
+
+        $newDelivered = $request->input('quantity_delivered') !== null ? (int) $request->input('quantity_delivered') : 0;
+        $newSupplied = $request->input('quantity_supplied') !== null ? (int) $request->input('quantity_supplied') : 0;
+
+        // Only update if delivered or supplied is different
+        if (
+            $newDelivered == 0 &&
+            $newSupplied == 0
+        ) {
+            return back()->with('custom_error', 'No changes detected. Nothing was updated.');
+        }
+
+        // Calculate the difference (delta) for delivered and supplied
+        $deltaDelivered = $newDelivered;
+        $deltaSupplied = $newSupplied;
+
+        // Prevent subtracting more than available in stock
+        if ($deltaSupplied > ($stock->quantity_in_stock + $deltaDelivered)) {
+            return back()
+                ->withErrors(['quantity_supplied' => 'Uitdelen niet mogelijk: onvoldoende voorraad beschikbaar'])
+                ->withInput()
+                ->with('custom_error', 'Uitdelen niet mogelijk: onvoldoende voorraad beschikbaar');
+        }
+
+        // Update stock: add delivered, subtract supplied
+        $quantityInStock = max(0, (int) $stock->quantity_in_stock + $deltaDelivered - $deltaSupplied);
+
+        // Save the last entered values for delivered and supplied
+        DB::statement('CALL update_stocks(?, ?, ?, ?)', [
+            $id,
+            $quantityInStock,
+            $newDelivered,
+            $newSupplied,
+        ]);
+
+        return redirect()->route('stocks.index')->with('success', 'Stock quantities updated successfully.');
+    }
+
+    public function edit($id)
+    {
+        $stock = DB::table('stocks')->where('id', $id)->first();
+        if (!$stock) {
+            abort(404);
+        }
+        return view('Stocks.update', compact('stock'));
+    }
+    
+    public function destroy($id)
+    {
+        $stock = DB::table('stocks')->where('id', $id)->first();
+        if (!$stock) {
+            return redirect()->route('stocks.index')->with('custom_error', 'Stock not found.');
+        }
+        if ($stock->quantity_in_stock > 0) {
+            return redirect()->route('stocks.index')->with('custom_error', 'Verwijderen niet mogelijk: voorraad is niet 0.');
+        }
+        DB::statement('CALL destroy_stocks(?)', [$id]);
+        return redirect()->route('stocks.index')->with('success', 'Stock deleted successfully.');
     }
 }

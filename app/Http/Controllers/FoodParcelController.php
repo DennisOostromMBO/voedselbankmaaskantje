@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -48,15 +49,16 @@ class FoodParcelController extends Controller
             $statistics = FoodParcel::getStatistics();
 
             // Get customers for filter dropdown
-            $customers = Customer::with(['family.person'])
-                ->where('is_active', true)
+            $customers = Customer::where('is_active', true)
                 ->get()
                 ->map(function ($customer) {
                     return (object)[
                         'id' => $customer->id,
-                        'number' => $customer->number,
-                        'name' => $customer->family->person->full_name ?? 'Customer #' . $customer->number,
-                        'display_name' => 'Customer #' . $customer->number . ' - ' . ($customer->family->person->full_name ?? 'Unknown')
+                        'number' => $customer->number ?? $customer->id,
+                        'first_name' => 'Klant',
+                        'last_name' => '#' . $customer->id,
+                        'name' => 'Klant #' . $customer->id,
+                        'display_name' => 'Klant #' . $customer->id
                     ];
                 });
 
@@ -79,7 +81,7 @@ class FoodParcelController extends Controller
                 ],
                 'customers' => collect([]),
                 'filters' => []
-            ])->with('error', 'Failed to load food parcels. Please try again.');
+            ])->with('error', 'Fout bij het laden van voedselpakketten. Probeer het opnieuw.');
         }
     }
 
@@ -91,39 +93,27 @@ class FoodParcelController extends Controller
     public function create()
     {
         try {
-            // Get customers for dropdown
-            $customers = Customer::with(['family.person'])
-                ->where('is_active', true)
+            // Get customers for dropdown - simplified
+            $customers = Customer::where('is_active', true)
                 ->get()
                 ->map(function ($customer) {
                     return (object)[
                         'id' => $customer->id,
-                        'number' => $customer->number,
-                        'name' => $customer->family->person->full_name ?? 'Customer #' . $customer->number,
-                        'display_name' => 'Customer #' . $customer->number . ' - ' . ($customer->family->person->full_name ?? 'Unknown')
+                        'number' => $customer->number ?? $customer->id,
+                        'name' => 'Klant #' . $customer->id,
+                        'display_name' => 'Klant #' . $customer->id
                     ];
                 });
 
-            // Get available stocks for dropdown
-            $stocks = Stock::with(['productCategory.product'])
-                ->where('is_active', true)
-                ->get()
-                ->map(function ($stock) {
-                    return (object)[
-                        'id' => $stock->id,
-                        'name' => $stock->productCategory->product->name ?? 'Stock #' . $stock->id,
-                        'category' => $stock->productCategory->category_name ?? 'Unknown Category',
-                        'description' => $stock->productCategory->product->description ?? '',
-                        'display_name' => 'Stock #' . $stock->id . ' - ' . ($stock->productCategory->category_name ?? 'Unknown') . ' (' . ($stock->productCategory->product->name ?? 'Unknown Product') . ')'
-                    ];
-                });
+            // Get available stocks for dropdown - using stored procedure
+            $stocks = Stock::getForDropdown();
 
             return view('food-parcels.create', compact('customers', 'stocks'));
         } catch (\Exception $e) {
             Log::error('Error loading food parcel create form: ' . $e->getMessage());
 
             return redirect()->route('food-parcels.index')
-                ->with('error', 'Failed to load create form. Please try again.');
+                ->with('error', 'Fout bij het laden van het aanmaakformulier. Probeer het opnieuw.');
         }
     }
 
@@ -136,19 +126,25 @@ class FoodParcelController extends Controller
     public function store(Request $request): RedirectResponse
     {
         try {
-            // Validate the request
+            // Validate the request with Dutch error messages
             $validatedData = $request->validate([
                 'stock_id' => 'required|integer|exists:stocks,id',
                 'customer_id' => 'required|integer|exists:customers,id',
                 'is_active' => 'boolean',
                 'note' => 'nullable|string|max:1000'
+            ], [
+                'stock_id.required' => 'Vergeet niet de voorraad in te vullen!',
+                'stock_id.exists' => 'Het geselecteerde voorraaditem bestaat niet.',
+                'customer_id.required' => 'Vergeet niet de klant in te vullen!',
+                'customer_id.exists' => 'De geselecteerde klant bestaat niet.',
+                'note.max' => 'De notitie mag maximaal 1000 tekens bevatten.'
             ]);
 
             // Create food parcel using stored procedure
             FoodParcel::createWithSP($validatedData);
 
             return redirect()->route('food-parcels.index')
-                ->with('success', 'Food parcel created successfully!');
+                ->with('success', 'Voedselpakket succesvol toegevoegd.');
         } catch (ValidationException $e) {
             return redirect()->back()
                 ->withErrors($e->errors())
@@ -157,7 +153,7 @@ class FoodParcelController extends Controller
             Log::error('Error creating food parcel: ' . $e->getMessage());
 
             return redirect()->back()
-                ->with('error', 'Failed to create food parcel. Please try again.')
+                ->with('error', 'Fout bij het aanmaken van voedselpakket. Probeer het opnieuw.')
                 ->withInput();
         }
     }
@@ -176,7 +172,7 @@ class FoodParcelController extends Controller
 
             if (!$foodParcel) {
                 return redirect()->route('food-parcels.index')
-                    ->with('error', 'Food parcel not found.');
+                    ->with('error', 'Voedselpakket niet gevonden.');
             }
 
             return view('food-parcels.show', compact('foodParcel'));
@@ -184,7 +180,7 @@ class FoodParcelController extends Controller
             Log::error('Error showing food parcel: ' . $e->getMessage());
 
             return redirect()->route('food-parcels.index')
-                ->with('error', 'Failed to load food parcel details. Please try again.');
+                ->with('error', 'Fout bij het laden van voedselpakket details. Probeer het opnieuw.');
         }
     }
 
@@ -200,40 +196,48 @@ class FoodParcelController extends Controller
             // Get food parcel details
             $foodParcel = FoodParcel::findOrFail($id);
 
-            // Get customers for dropdown
-            $customers = Customer::with(['family.person'])
-                ->where('is_active', true)
+            // Get customers for dropdown - simplified
+            $customers = Customer::where('is_active', true)
                 ->get()
                 ->map(function ($customer) {
                     return (object)[
                         'id' => $customer->id,
-                        'number' => $customer->number,
-                        'name' => $customer->family->person->full_name ?? 'Customer #' . $customer->number,
-                        'display_name' => 'Customer #' . $customer->number . ' - ' . ($customer->family->person->full_name ?? 'Unknown')
+                        'number' => $customer->number ?? $customer->id,
+                        'name' => 'Klant #' . $customer->id,
+                        'display_name' => 'Klant #' . $customer->id
                     ];
                 });
 
-            // Get available stocks for dropdown
-            $stocks = Stock::with(['productCategory.product'])
-                ->where('is_active', true)
-                ->orWhere('id', $foodParcel->stock_id)
-                ->get()
-                ->map(function ($stock) {
-                    return (object)[
-                        'id' => $stock->id,
-                        'name' => $stock->productCategory->product->name ?? 'Stock #' . $stock->id,
-                        'category' => $stock->productCategory->category_name ?? 'Unknown Category',
-                        'description' => $stock->productCategory->product->description ?? '',
-                        'display_name' => 'Stock #' . $stock->id . ' - ' . ($stock->productCategory->category_name ?? 'Unknown') . ' (' . ($stock->productCategory->product->name ?? 'Unknown Product') . ')'
-                    ];
-                });
+            // Get available stocks for dropdown - include current stock even if inactive
+            $stocks = Stock::getForDropdown();
+            $currentStock = DB::select('SELECT * FROM stocks WHERE id = ?', [$foodParcel->stock_id]);
+
+            if (!empty($currentStock)) {
+                $currentStockData = $currentStock[0];
+                $currentStockFormatted = (object)[
+                    'id' => $currentStockData->id,
+                    'product_name' => 'Huidig Voorraaditem',
+                    'category_name' => 'Geselecteerd',
+                    'quantity_in_stock' => $currentStockData->quantity_in_stock ?? 0,
+                    'unit' => $currentStockData->unit ?? 'stuks',
+                    'is_active' => $currentStockData->is_active,
+                    'display_name' => 'Huidig Voorraaditem (ID: ' . $currentStockData->id . ')',
+                    'received_date' => $currentStockData->received_date,
+                    'delivered_date' => $currentStockData->delivered_date,
+                ];
+
+                // Add current stock if not already in the list
+                if (!$stocks->contains('id', $foodParcel->stock_id)) {
+                    $stocks->prepend($currentStockFormatted);
+                }
+            }
 
             return view('food-parcels.edit', compact('foodParcel', 'customers', 'stocks'));
         } catch (\Exception $e) {
             Log::error('Error loading food parcel edit form: ' . $e->getMessage());
 
             return redirect()->route('food-parcels.index')
-                ->with('error', 'Failed to load edit form. Please try again.');
+                ->with('error', 'Fout bij het laden van het bewerkingsformulier. Probeer het opnieuw.');
         }
     }
 
@@ -247,19 +251,44 @@ class FoodParcelController extends Controller
     public function update(Request $request, int $id): RedirectResponse
     {
         try {
-            // Validate the request
+            // Get the current food parcel to check its status
+            $currentParcel = FoodParcel::findOrFail($id);
+
+            // Validate the request with Dutch error messages
             $validatedData = $request->validate([
                 'stock_id' => 'required|integer|exists:stocks,id',
                 'customer_id' => 'required|integer|exists:customers,id',
                 'is_active' => 'boolean',
                 'note' => 'nullable|string|max:1000'
+            ], [
+                'stock_id.required' => 'Vergeet niet de voorraad in te vullen!',
+                'stock_id.exists' => 'Het geselecteerde voorraaditem bestaat niet.',
+                'customer_id.required' => 'Vergeet niet de klant in te vullen!',
+                'customer_id.exists' => 'De geselecteerde klant bestaat niet.',
+                'note.max' => 'De notitie mag maximaal 1000 tekens bevatten.'
             ]);
+
+            // Check if parcel is in active distribution (business rule)
+            // Een pakket is "in distributie" als het actief is
+            if ($currentParcel->is_active) {
+                // Controleer of er belangrijke wijzigingen worden gemaakt
+                $hasImportantChanges = (
+                    $validatedData['customer_id'] != $currentParcel->customer_id ||
+                    $validatedData['stock_id'] != $currentParcel->stock_id
+                );
+
+                if ($hasImportantChanges) {
+                    return redirect()->back()
+                        ->with('error', 'Wijzigen niet toegestaan: pakket is momenteel in distributie.')
+                        ->withInput();
+                }
+            }
 
             // Update food parcel using stored procedure
             FoodParcel::updateWithSP($id, $validatedData);
 
             return redirect()->route('food-parcels.index')
-                ->with('success', 'Food parcel updated successfully!');
+                ->with('success', 'Voedselpakket succesvol bijgewerkt.');
         } catch (ValidationException $e) {
             return redirect()->back()
                 ->withErrors($e->errors())
@@ -268,7 +297,7 @@ class FoodParcelController extends Controller
             Log::error('Error updating food parcel: ' . $e->getMessage());
 
             return redirect()->back()
-                ->with('error', 'Failed to update food parcel. Please try again.')
+                ->with('error', 'Fout bij het bijwerken van voedselpakket. Probeer het opnieuw.')
                 ->withInput();
         }
     }
@@ -282,16 +311,25 @@ class FoodParcelController extends Controller
     public function destroy(int $id): RedirectResponse
     {
         try {
+            // Get the food parcel to check if it's in active distribution
+            $foodParcel = FoodParcel::findOrFail($id);
+
+            // Check if parcel is in active distribution (business rule)
+            if ($foodParcel->is_active) {
+                return redirect()->route('food-parcels.index')
+                    ->with('error', 'Kan voedselpakket niet verwijderen: gekoppeld aan actieve uitgifte.');
+            }
+
             // Delete food parcel using stored procedure
             FoodParcel::deleteWithSP($id);
 
             return redirect()->route('food-parcels.index')
-                ->with('success', 'Food parcel deleted successfully!');
+                ->with('success', 'Voedselpakket succesvol verwijderd.');
         } catch (\Exception $e) {
             Log::error('Error deleting food parcel: ' . $e->getMessage());
 
             return redirect()->route('food-parcels.index')
-                ->with('error', 'Failed to delete food parcel. Please try again.');
+                ->with('error', 'Fout bij het verwijderen van voedselpakket. Probeer het opnieuw.');
         }
     }
 
@@ -330,15 +368,15 @@ class FoodParcelController extends Controller
                 // CSV Headers
                 fputcsv($file, [
                     'ID',
-                    'Customer Name',
-                    'Customer Email',
-                    'Stock Item',
-                    'Category',
-                    'Quantity',
+                    'Klant Naam',
+                    'Klant Email',
+                    'Voorraad Item',
+                    'Categorie',
+                    'Hoeveelheid',
                     'Status',
-                    'Expiry Date',
-                    'Note',
-                    'Created Date'
+                    'Vervaldatum',
+                    'Notitie',
+                    'Aanmaakdatum'
                 ]);
 
                 // CSV Data
@@ -350,7 +388,7 @@ class FoodParcelController extends Controller
                         $parcel->product_name ?? 'N/A',
                         $parcel->category_name ?? 'N/A',
                         $parcel->stock_quantity ?? 0,
-                        $parcel->is_active ? 'Active' : 'Inactive',
+                        $parcel->is_active ? 'Actief' : 'Inactief',
                         $parcel->stock_expiry_date ?
                             \Carbon\Carbon::parse($parcel->stock_expiry_date)->format('Y-m-d') : 'N/A',
                         $parcel->note ?? '',
@@ -366,7 +404,7 @@ class FoodParcelController extends Controller
             Log::error('Error exporting food parcels to CSV: ' . $e->getMessage());
 
             return redirect()->route('food-parcels.index')
-                ->with('error', 'Failed to export data. Please try again.');
+                ->with('error', 'Fout bij het exporteren van gegevens. Probeer het opnieuw.');
         }
     }
 
@@ -400,7 +438,7 @@ class FoodParcelController extends Controller
             Log::error('Error exporting food parcels to PDF: ' . $e->getMessage());
 
             return redirect()->route('food-parcels.index')
-                ->with('error', 'Failed to export PDF. Please try again.');
+                ->with('error', 'Fout bij het exporteren van PDF. Probeer het opnieuw.');
         }
     }
 
@@ -432,16 +470,16 @@ class FoodParcelController extends Controller
 
             if ($deletedCount > 0) {
                 return redirect()->route('food-parcels.index')
-                    ->with('success', "Successfully deleted {$deletedCount} food parcel(s).");
+                    ->with('success', "{$deletedCount} voedselpakket(ten) succesvol verwijderd.");
             } else {
                 return redirect()->route('food-parcels.index')
-                    ->with('error', 'No food parcels were deleted.');
+                    ->with('error', 'Geen voedselpakketten zijn verwijderd.');
             }
         } catch (\Exception $e) {
             Log::error('Error in bulk delete: ' . $e->getMessage());
 
             return redirect()->route('food-parcels.index')
-                ->with('error', 'Failed to delete selected food parcels. Please try again.');
+                ->with('error', 'Fout bij het verwijderen van geselecteerde voedselpakketten. Probeer het opnieuw.');
         }
     }
 
@@ -484,18 +522,18 @@ class FoodParcelController extends Controller
             }
 
             if ($updatedCount > 0) {
-                $statusText = $newStatus ? 'activated' : 'deactivated';
+                $statusText = $newStatus ? 'geactiveerd' : 'gedeactiveerd';
                 return redirect()->route('food-parcels.index')
-                    ->with('success', "Successfully {$statusText} {$updatedCount} food parcel(s).");
+                    ->with('success', "{$updatedCount} voedselpakket(ten) succesvol {$statusText}.");
             } else {
                 return redirect()->route('food-parcels.index')
-                    ->with('error', 'No food parcels were updated.');
+                    ->with('error', 'Geen voedselpakketten zijn bijgewerkt.');
             }
         } catch (\Exception $e) {
             Log::error('Error in bulk status update: ' . $e->getMessage());
 
             return redirect()->route('food-parcels.index')
-                ->with('error', 'Failed to update selected food parcels. Please try again.');
+                ->with('error', 'Fout bij het bijwerken van geselecteerde voedselpakketten. Probeer het opnieuw.');
         }
     }
 

@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.app-sections')
 
-@section('title', 'Edit Food Parcel')
+@section('title', 'Voedselpakket Wijzigen')
 
 @section('content')
 <div class="container">
@@ -25,20 +25,20 @@
             <div>
                 <h1 class="card-title">
                     <i class="fas fa-edit"></i>
-                    Edit Food Parcel
+                    Voedselpakket Wijzigen
                 </h1>
                 <p class="card-subtitle">
-                    Modify food parcel information for parcel #{{ $foodParcel->id }}
+                    Wijzig voedselpakket informatie voor pakket #{{ $foodParcel->id }}
                 </p>
             </div>
             <div class="btn-group">
                 <a href="{{ route('food-parcels.show', $foodParcel->id) }}" class="btn btn-info">
                     <i class="fas fa-eye"></i>
-                    <span class="btn-text">View Details</span>
+                    <span class="btn-text">Bekijk Details</span>
                 </a>
                 <a href="{{ route('food-parcels.index') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i>
-                    <span class="btn-text">Back to List</span>
+                    <span class="btn-text">Terug naar Overzicht</span>
                 </a>
             </div>
         </div>
@@ -47,19 +47,27 @@
     <!-- Edit Form -->
     <div class="card">
         <div class="card-content">
+            @if($foodParcel->is_active)
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Let op:</strong> Dit voedselpakket is momenteel actief en in distributie.
+                    Alleen notities en status kunnen worden gewijzigd. Voor wijzigingen aan klant of voorraad moet u het pakket eerst deactiveren.
+                </div>
+            @endif
+
             <form action="{{ route('food-parcels.update', $foodParcel->id) }}" method="POST" id="editFoodParcelForm" class="needs-validation" novalidate>
                 @csrf
                 @method('PUT')
-                
+
                 <div class="form-grid">
                     <!-- Customer Selection -->
                     <div class="form-group">
                         <label for="customer_id" class="form-label required">
                             <i class="fas fa-user"></i>
-                            Customer
+                            Klant
                         </label>
                         <select name="customer_id" id="customer_id" class="form-control select2 @error('customer_id') is-invalid @enderror" required>
-                            <option value="">Select a customer...</option>
+                            <option value="">Selecteer een klant...</option>
                             @foreach($customers as $customer)
                                 <option value="{{ $customer->id }}" {{ old('customer_id', $foodParcel->customer_id) == $customer->id ? 'selected' : '' }}>
                                     #{{ $customer->id }} - {{ $customer->name ?? $customer->email }}
@@ -71,7 +79,7 @@
                         @enderror
                         <small class="form-text">
                             <i class="fas fa-info-circle"></i>
-                            Select the customer who will receive this food parcel
+                            Selecteer de klant die dit voedselpakket zal ontvangen
                         </small>
                     </div>
 
@@ -79,16 +87,19 @@
                     <div class="form-group">
                         <label for="stock_id" class="form-label required">
                             <i class="fas fa-warehouse"></i>
-                            Stock Item
+                            Voorraad Item
                         </label>
                         <select name="stock_id" id="stock_id" class="form-control select2 @error('stock_id') is-invalid @enderror" required>
-                            <option value="">Select a stock item...</option>
+                            <option value="">Selecteer een voorraad item...</option>
                             @foreach($stocks as $stock)
-                                <option value="{{ $stock->id }}" 
-                                        data-quantity="{{ $stock->quantity }}" 
-                                        data-expiry="{{ $stock->expiry_date ? \Carbon\Carbon::parse($stock->expiry_date)->format('M d, Y') : 'N/A' }}"
+                                <option value="{{ $stock->id }}"
+                                        data-quantity="{{ $stock->quantity_in_stock }}"
+                                        data-unit="{{ $stock->unit }}"
+                                        data-product="{{ $stock->product_name }}"
+                                        data-category="{{ $stock->category_name }}"
+                                        data-received="{{ $stock->received_date ? \Carbon\Carbon::parse($stock->received_date)->format('d-m-Y') : 'N/A' }}"
                                         {{ old('stock_id', $foodParcel->stock_id) == $stock->id ? 'selected' : '' }}>
-                                    #{{ $stock->id }} - {{ $stock->name }} ({{ $stock->quantity }} available)
+                                    {{ $stock->display_name }}
                                 </option>
                             @endforeach
                         </select>
@@ -97,7 +108,7 @@
                         @enderror
                         <small class="form-text">
                             <i class="fas fa-info-circle"></i>
-                            Choose the stock item to include in this parcel
+                            Kies het voorraad item om in dit pakket op te nemen
                         </small>
                     </div>
 
@@ -105,15 +116,15 @@
                     <div id="stockPreview" class="stock-preview" style="display: none;">
                         <div class="preview-header">
                             <i class="fas fa-eye"></i>
-                            Stock Information Preview
+                            Voorraad Informatie Voorbeeld
                         </div>
                         <div class="preview-content">
                             <div class="preview-item">
-                                <span class="preview-label">Available Quantity:</span>
+                                <span class="preview-label">Beschikbare Hoeveelheid:</span>
                                 <span id="previewQuantity" class="preview-value">-</span>
                             </div>
                             <div class="preview-item">
-                                <span class="preview-label">Expiry Date:</span>
+                                <span class="preview-label">Vervaldatum:</span>
                                 <span id="previewExpiry" class="preview-value">-</span>
                             </div>
                         </div>
@@ -128,14 +139,14 @@
                         <div class="form-switch-group">
                             <div class="form-switch">
                                 <input type="hidden" name="is_active" value="0">
-                                <input type="checkbox" name="is_active" id="is_active" value="1" 
-                                       class="form-switch-input @error('is_active') is-invalid @enderror" 
+                                <input type="checkbox" name="is_active" id="is_active" value="1"
+                                       class="form-switch-input @error('is_active') is-invalid @enderror"
                                        {{ old('is_active', $foodParcel->is_active) ? 'checked' : '' }}>
                                 <label for="is_active" class="form-switch-label">
                                     <span class="form-switch-button"></span>
                                     <span class="form-switch-text">
-                                        <span class="active-text">Active</span>
-                                        <span class="inactive-text">Inactive</span>
+                                        <span class="active-text">Actief</span>
+                                        <span class="inactive-text">Inactief</span>
                                     </span>
                                 </label>
                             </div>
@@ -145,7 +156,7 @@
                         @enderror
                         <small class="form-text">
                             <i class="fas fa-info-circle"></i>
-                            Toggle to activate or deactivate this food parcel
+                            Schakel in om dit voedselpakket te activeren of deactiveren
                         </small>
                     </div>
 
@@ -153,17 +164,17 @@
                     <div class="form-group full-width">
                         <label for="note" class="form-label">
                             <i class="fas fa-sticky-note"></i>
-                            Notes
+                            Notities
                         </label>
-                        <textarea name="note" id="note" rows="4" 
-                                  class="form-control @error('note') is-invalid @enderror" 
-                                  placeholder="Enter any additional notes or comments about this food parcel...">{{ old('note', $foodParcel->note) }}</textarea>
+                        <textarea name="note" id="note" rows="4"
+                                  class="form-control @error('note') is-invalid @enderror"
+                                  placeholder="Voeg eventuele aanvullende notities of opmerkingen over dit voedselpakket toe...">{{ old('note', $foodParcel->note) }}</textarea>
                         @error('note')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                         <small class="form-text">
                             <i class="fas fa-info-circle"></i>
-                            Optional: Add any special instructions or comments
+                            Optioneel: Voeg speciale instructies of opmerkingen toe
                         </small>
                     </div>
                 </div>
@@ -172,22 +183,22 @@
                 <div class="form-actions">
                     <button type="submit" class="btn btn-success btn-lg">
                         <i class="fas fa-save"></i>
-                        Update Food Parcel
+                        Voedselpakket Bijwerken
                     </button>
-                    
+
                     <button type="button" class="btn btn-warning btn-lg" onclick="resetForm()">
                         <i class="fas fa-undo"></i>
-                        Reset Changes
+                        Wijzigingen Terugzetten
                     </button>
-                    
+
                     <a href="{{ route('food-parcels.show', $foodParcel->id) }}" class="btn btn-info btn-lg">
                         <i class="fas fa-eye"></i>
-                        View Details
+                        Bekijk Details
                     </a>
-                    
+
                     <a href="{{ route('food-parcels.index') }}" class="btn btn-secondary btn-lg">
                         <i class="fas fa-times"></i>
-                        Cancel
+                        Annuleren
                     </a>
                 </div>
             </form>
@@ -201,34 +212,34 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fas fa-info-circle"></i>
-                    Current Information
+                    Huidige Informatie
                 </h3>
             </div>
             <div class="card-content">
                 <div class="info-item">
-                    <span class="info-label">Parcel ID:</span>
+                    <span class="info-label">Pakket ID:</span>
                     <span class="info-value">#{{ $foodParcel->id }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">Created:</span>
-                    <span class="info-value">{{ \Carbon\Carbon::parse($foodParcel->created_at)->format('M d, Y') }}</span>
+                    <span class="info-label">Aangemaakt:</span>
+                    <span class="info-value">{{ \Carbon\Carbon::parse($foodParcel->created_at)->format('d M Y') }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">Last Updated:</span>
+                    <span class="info-label">Laatst Bijgewerkt:</span>
                     <span class="info-value">{{ \Carbon\Carbon::parse($foodParcel->updated_at)->diffForHumans() }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">Current Status:</span>
+                    <span class="info-label">Huidige Status:</span>
                     <span class="info-value">
                         @if($foodParcel->is_active)
                             <span class="status-badge status-active">
                                 <i class="fas fa-check-circle"></i>
-                                Active
+                                Actief
                             </span>
                         @else
                             <span class="status-badge status-inactive">
                                 <i class="fas fa-times-circle"></i>
-                                Inactive
+                                Inactief
                             </span>
                         @endif
                     </span>
@@ -241,29 +252,29 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fas fa-question-circle"></i>
-                    Help & Tips
+                    Hulp & Tips
                 </h3>
             </div>
             <div class="card-content">
                 <div class="help-item">
                     <i class="fas fa-lightbulb"></i>
                     <div>
-                        <strong>Customer Selection:</strong>
-                        <p>Choose the customer who will receive this food parcel. You can search by name or ID.</p>
+                        <strong>Klant Selectie:</strong>
+                        <p>Kies de klant die dit voedselpakket zal ontvangen. Je kunt zoeken op naam of ID.</p>
                     </div>
                 </div>
                 <div class="help-item">
                     <i class="fas fa-lightbulb"></i>
                     <div>
-                        <strong>Stock Management:</strong>
-                        <p>Select stock items that are available and not expired. Check the preview for stock details.</p>
+                        <strong>Voorraad Beheer:</strong>
+                        <p>Selecteer voorraad items die beschikbaar zijn en niet verlopen. Controleer het voorbeeld voor voorraad details.</p>
                     </div>
                 </div>
                 <div class="help-item">
                     <i class="fas fa-lightbulb"></i>
                     <div>
-                        <strong>Status Control:</strong>
-                        <p>Use the toggle to activate or deactivate the food parcel as needed.</p>
+                        <strong>Status Controle:</strong>
+                        <p>Gebruik de schakelaar om het voedselpakket te activeren of deactiveren naar behoefte.</p>
                     </div>
                 </div>
             </div>
@@ -484,15 +495,15 @@
     .form-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .info-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .form-actions {
         flex-direction: column;
     }
-    
+
     .btn-group {
         flex-direction: column;
         width: 100%;
@@ -505,11 +516,11 @@
         gap: 1rem;
         align-items: flex-start;
     }
-    
+
     .preview-content {
         grid-template-columns: 1fr;
     }
-    
+
     .form-switch-label {
         flex-direction: column;
         align-items: flex-start;
@@ -525,6 +536,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const stockPreview = document.getElementById('stockPreview');
     const previewQuantity = document.getElementById('previewQuantity');
     const previewExpiry = document.getElementById('previewExpiry');
+    const customerSelect = document.getElementById('customer_id');
+
+    // Check if food parcel is active and disable critical fields
+    const isActive = {{ $foodParcel->is_active ? 'true' : 'false' }};
+    if (isActive) {
+        customerSelect.disabled = true;
+        stockSelect.disabled = true;
+        customerSelect.style.backgroundColor = '#f8f9fa';
+        stockSelect.style.backgroundColor = '#f8f9fa';
+
+        // Add tooltip explanations
+        customerSelect.title = 'Klant kan niet worden gewijzigd terwijl het pakket actief is';
+        stockSelect.title = 'Voorraad kan niet worden gewijzigd terwijl het pakket actief is';
+    }
 
     // Initialize with current selection
     if (stockSelect.value) {
@@ -538,14 +563,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateStockPreview() {
         const selectedOption = stockSelect.options[stockSelect.selectedIndex];
-        
+
         if (selectedOption.value) {
             const quantity = selectedOption.dataset.quantity || 'N/A';
             const expiry = selectedOption.dataset.expiry || 'N/A';
-            
-            previewQuantity.textContent = quantity + ' units';
+
+            previewQuantity.textContent = quantity + ' stuks';
             previewExpiry.textContent = expiry;
-            
+
             stockPreview.style.display = 'block';
         } else {
             stockPreview.style.display = 'none';
@@ -567,7 +592,7 @@ document.addEventListener('DOMContentLoaded', function() {
  * Reset form to original values
  */
 function resetForm() {
-    if (confirm('Are you sure you want to reset all changes? This will revert to the original values.')) {
+    if (confirm('Weet u zeker dat u alle wijzigingen wilt terugzetten? Dit zal terugkeren naar de oorspronkelijke waarden.')) {
         location.reload();
     }
 }

@@ -1,4 +1,4 @@
-DELIMITER //
+
 
 CREATE PROCEDURE create_stocks(
     IN p_product_category_id INT,
@@ -37,6 +37,6 @@ BEGIN
         NOW(),
         NOW()
     );
-END //
+END;
 
-DELIMITER ;
+

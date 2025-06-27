@@ -4,77 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
-/**
- * Customer Model
- * 
- * Represents a customer entity in the food bank system.
- * A customer belongs to a family and can have multiple food parcels.
- */
 class Customer extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'family_id',
-        'number',
-        'is_active',
-        'note',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
-
-    /**
-     * Get the family that owns the customer.
-     */
-    public function family(): BelongsTo
+    public static function getAllFromSP()
     {
-        return $this->belongsTo(Family::class);
+        return DB::select('CALL spGetAllCustomers()');
     }
 
-    /**
-     * Get the food parcels for the customer.
-     */
-    public function foodParcels(): HasMany
+    public static function deleteFromSP($id)
     {
-        return $this->hasMany(FoodParcel::class);
+        return DB::statement('CALL spDeleteCustomer(?)', [$id]);
     }
 
-    /**
-     * Scope a query to only include active customers.
-     */
-    public function scopeActive($query)
+    public static function getByIdFromSP($id)
     {
-        return $query->where('is_active', true);
-    }
-
-    /**
-     * Get the customer's display name.
-     */
-    public function getDisplayNameAttribute(): string
-    {
-        return $this->number . ' - ' . $this->family->name;
-    }
-
-    /**
-     * Get the customer's person name through family relationship.
-     */
-    public function getPersonNameAttribute(): string
-    {
-        return $this->family->person->full_name ?? 'Unknown';
+        $result = DB::select('CALL spGetCustomerById(?)', [$id]);
+        return $result[0] ?? null;
     }
 }
+

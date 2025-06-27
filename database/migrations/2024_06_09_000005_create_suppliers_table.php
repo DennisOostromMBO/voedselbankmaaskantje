@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('supplier_name', 255);
             $table->string('contact_number', 20);
             $table->boolean('is_active');
+            $table->dateTime('upcoming_delivery_at')->nullable(); // Changed to datetime for date and time
             $table->text('note')->nullable();
             $table->timestamps();
         });
