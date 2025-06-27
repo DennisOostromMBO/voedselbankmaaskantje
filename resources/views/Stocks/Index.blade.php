@@ -51,6 +51,7 @@
                                 <th>Voorraad</th>
                                 <th>Geleverd</th>
                                 <th>Uitgedeeld</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,6 +76,12 @@
                                     <td>{{ $stock->quantity_in_stock }}</td>
                                     <td>{{ $stock->quantity_delivered }}</td>
                                     <td>{{ $stock->quantity_supplied }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ route('stocks.edit', $stock->id) }}" class="btn btn-warning btn-sm">Update</a>
+
+                                        </div>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
