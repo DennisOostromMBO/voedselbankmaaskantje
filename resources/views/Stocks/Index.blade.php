@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    
     <main class="main-content">
         <div class="container">
             <div class="card">
@@ -43,7 +42,7 @@
                                 <th>Voorraad</th>
                                 <th>Geleverd</th>
                                 <th>Uitgedeeld</th>
-                                <th>Actions</th>
+                                <th>Acties</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -71,7 +70,11 @@
                                     <td>
                                         <div class="btn-group">
                                             <a href="{{ route('stocks.edit', $stock->id) }}" class="btn btn-warning btn-sm">Update</a>
-
+                                            <form action="{{ route('stocks.destroy', $stock->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Weet je zeker dat je deze voorraad wilt verwijderen?')">Delete</button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>

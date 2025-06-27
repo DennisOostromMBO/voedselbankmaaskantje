@@ -215,6 +215,13 @@ class StockController extends Controller
     
     public function destroy($id)
     {
+        $stock = DB::table('stocks')->where('id', $id)->first();
+        if (!$stock) {
+            return redirect()->route('stocks.index')->with('custom_error', 'Stock not found.');
+        }
+        if ($stock->quantity_in_stock > 0) {
+            return redirect()->route('stocks.index')->with('custom_error', 'Verwijderen niet mogelijk: voorraad is niet 0.');
+        }
         DB::statement('CALL destroy_stocks(?)', [$id]);
         return redirect()->route('stocks.index')->with('success', 'Stock deleted successfully.');
     }
