@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.app-sections')
 
-@section('title', 'Food Parcels Management')
+@section('title', 'Voedselpakketten Overzicht')
 
 @section('content')
 <div class="container">
@@ -25,28 +25,28 @@
             <div class="stat-value">{{ $statistics->total ?? 0 }}</div>
             <div class="stat-label">
                 <i class="fas fa-box"></i>
-                Total Parcels
+                Totaal Pakketten
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-value">{{ $statistics->active ?? 0 }}</div>
             <div class="stat-label">
                 <i class="fas fa-check-circle"></i>
-                Active Parcels
+                Actieve Pakketten
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-value">{{ $statistics->inactive ?? 0 }}</div>
             <div class="stat-label">
                 <i class="fas fa-times-circle"></i>
-                Inactive Parcels
+                Inactieve Pakketten
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-value">{{ $statistics->this_month ?? 0 }}</div>
             <div class="stat-label">
                 <i class="fas fa-calendar-alt"></i>
-                This Month
+                Deze Maand
             </div>
         </div>
     </div>
@@ -57,16 +57,16 @@
             <div>
                 <h1 class="card-title">
                     <i class="fas fa-box"></i>
-                    Food Parcels Management
+                    Voedselpakketten Overzicht
                 </h1>
-                <p class="card-subtitle">Manage and track all food parcels for customers</p>
+                <p class="card-subtitle">Beheer en volg alle voedselpakketten voor klanten</p>
             </div>
             <div class="btn-group">
                 <a href="{{ route('food-parcels.create') }}" class="btn btn-primary">
                     <i class="fas fa-plus"></i>
-                    <span class="btn-text">Add New Parcel</span>
+                    <span class="btn-text">Nieuw Voedselpakket Toevoegen</span>
                 </a>
-                
+
                 <div class="dropdown">
                     <button class="btn btn-outline dropdown-toggle" onclick="toggleDropdown('exportDropdown')">
                         <i class="fas fa-download"></i>
@@ -75,40 +75,40 @@
                     <div id="exportDropdown" class="dropdown-menu">
                         <a href="{{ route('food-parcels.export.csv', request()->query()) }}" class="dropdown-item">
                             <i class="fas fa-file-csv"></i>
-                            Export as CSV
+                            Exporteer als CSV
                         </a>
                         <a href="{{ route('food-parcels.export.pdf', request()->query()) }}" class="dropdown-item" target="_blank">
                             <i class="fas fa-file-pdf"></i>
-                            Export as PDF
+                            Exporteer als PDF
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="dropdown">
                     <button class="btn btn-outline dropdown-toggle" onclick="toggleDropdown('bulkDropdown')" id="bulkActionsBtn" disabled>
                         <i class="fas fa-tasks"></i>
-                        <span class="btn-text">Bulk Actions</span>
+                        <span class="btn-text">Bulk Acties</span>
                     </button>
                     <div id="bulkDropdown" class="dropdown-menu">
                         <button type="button" class="dropdown-item" onclick="bulkUpdateStatus(true)">
                             <i class="fas fa-check-circle"></i>
-                            Activate Selected
+                            Activeer Geselecteerde
                         </button>
                         <button type="button" class="dropdown-item" onclick="bulkUpdateStatus(false)">
                             <i class="fas fa-times-circle"></i>
-                            Deactivate Selected
+                            Deactiveer Geselecteerde
                         </button>
                         <div class="dropdown-divider"></div>
                         <button type="button" class="dropdown-item text-danger" onclick="bulkDelete()">
                             <i class="fas fa-trash"></i>
-                            Delete Selected
+                            Verwijder Geselecteerde
                         </button>
                     </div>
                 </div>
-                
+
                 <button class="btn btn-outline" onclick="window.print()">
                     <i class="fas fa-print"></i>
-                    <span class="btn-text">Print List</span>
+                    <span class="btn-text">Lijst Afdrukken</span>
                 </button>
             </div>
         </div>
@@ -116,23 +116,23 @@
         <!-- Search and Filters -->
         <form method="GET" action="{{ route('food-parcels.index') }}" class="search-container">
             <div class="form-group search-input">
-                <label class="form-label">Search</label>
-                <input 
-                    type="text" 
-                    name="search" 
-                    class="form-control" 
-                    placeholder="Search by customer name, email, product..." 
+                <label class="form-label">Zoeken</label>
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Zoek op klantnaam, e-mail, product..."
                     value="{{ $filters['search'] ?? '' }}"
                 >
             </div>
-            
+
             <div class="form-group">
-                <label class="form-label">Customer</label>
+                <label class="form-label">Klant</label>
                 <select name="customer_id" class="form-control form-select">
-                    <option value="">All Customers</option>
+                    <option value="">Alle Klanten</option>
                     @foreach($customers as $customer)
-                        <option 
-                            value="{{ $customer->id }}" 
+                        <option
+                            value="{{ $customer->id }}"
                             {{ ($filters['customer_id'] ?? '') == $customer->id ? 'selected' : '' }}
                         >
                             {{ $customer->first_name }} {{ $customer->last_name }}
@@ -140,26 +140,26 @@
                     @endforeach
                 </select>
             </div>
-            
+
             <div class="form-group">
                 <label class="form-label">Status</label>
                 <select name="is_active" class="form-control form-select">
-                    <option value="">All Status</option>
-                    <option value="1" {{ ($filters['is_active'] ?? '') === '1' ? 'selected' : '' }}>Active</option>
-                    <option value="0" {{ ($filters['is_active'] ?? '') === '0' ? 'selected' : '' }}>Inactive</option>
+                    <option value="">Alle Statussen</option>
+                    <option value="1" {{ ($filters['is_active'] ?? '') === '1' ? 'selected' : '' }}>Actief</option>
+                    <option value="0" {{ ($filters['is_active'] ?? '') === '0' ? 'selected' : '' }}>Inactief</option>
                 </select>
             </div>
-            
+
             <div class="form-group">
                 <label class="form-label">&nbsp;</label>
                 <div class="btn-group">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-search"></i>
-                        Search
+                        Zoeken
                     </button>
                     <a href="{{ route('food-parcels.index') }}" class="btn btn-secondary">
                         <i class="fas fa-times"></i>
-                        Clear
+                        Wissen
                     </a>
                 </div>
             </div>
@@ -170,7 +170,7 @@
             <form id="bulkActionsForm" method="POST">
                 @csrf
                 @method('DELETE')
-                
+
                 <table class="table">
                     <thead>
                         <tr>
@@ -180,13 +180,12 @@
                                     <span class="checkmark"></span>
                                 </label>
                             </th>
-                            <th><i class="fas fa-hashtag"></i> ID</th>
-                            <th><i class="fas fa-user"></i> Customer</th>
+                            <th><i class="fas fa-user"></i> Klant</th>
                             <th><i class="fas fa-box"></i> Product</th>
-                            <th><i class="fas fa-warehouse"></i> Stock</th>
+                            <th><i class="fas fa-warehouse"></i> Voorraad</th>
                             <th><i class="fas fa-toggle-on"></i> Status</th>
-                            <th><i class="fas fa-calendar"></i> Created</th>
-                            <th><i class="fas fa-cogs"></i> Actions</th>
+                            <th><i class="fas fa-calendar"></i> Aangemaakt</th>
+                            <th><i class="fas fa-cogs"></i> Acties</th>
                         </tr>
                     </thead>
                 <tbody>
@@ -197,9 +196,6 @@
                                     <input type="checkbox" name="selected_ids[]" value="{{ $parcel->id }}" class="row-checkbox" onchange="updateBulkActions()">
                                     <span class="checkmark"></span>
                                 </label>
-                            </td>
-                            <td>
-                                <span class="badge badge-secondary">#{{ $parcel->id }}</span>
                             </td>
                             <td>
                                 <div>
@@ -222,20 +218,27 @@
                                             <small class="text-muted">{{ $parcel->category_name }}</small>
                                         @endif
                                     @else
-                                        <span class="text-muted">No product info</span>
+                                        <span class="text-muted">Geen productinformatie</span>
                                     @endif
                                 </div>
                             </td>
                             <td>
                                 <div>
                                     <span class="badge badge-info">
-                                        Qty: {{ $parcel->stock_quantity ?? 0 }}
+                                        {{ $parcel->stock_quantity ?? 0 }} {{ $parcel->stock_unit ?? 'stuks' }}
                                     </span>
-                                    @if($parcel->stock_expiry_date)
+                                    @if($parcel->stock_received_date)
                                         <br>
                                         <small class="text-muted">
-                                            <i class="fas fa-calendar-times"></i>
-                                            Exp: {{ \Carbon\Carbon::parse($parcel->stock_expiry_date)->format('d/m/Y') }}
+                                            <i class="fas fa-calendar-plus"></i>
+                                            Ontvangen: {{ \Carbon\Carbon::parse($parcel->stock_received_date)->format('d/m/Y') }}
+                                        </small>
+                                    @endif
+                                    @if($parcel->stock_delivered_date)
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="fas fa-truck"></i>
+                                            Geleverd: {{ \Carbon\Carbon::parse($parcel->stock_delivered_date)->format('d/m/Y') }}
                                         </small>
                                     @endif
                                 </div>
@@ -244,12 +247,12 @@
                                 @if($parcel->is_active)
                                     <span class="badge badge-success">
                                         <i class="fas fa-check"></i>
-                                        Active
+                                        Actief
                                     </span>
                                 @else
                                     <span class="badge badge-warning">
                                         <i class="fas fa-pause"></i>
-                                        Inactive
+                                        Inactief
                                     </span>
                                 @endif
 
@@ -258,12 +261,12 @@
                                     @if($parcel->expiry_status === 'Expired')
                                         <span class="badge badge-danger">
                                             <i class="fas fa-exclamation-triangle"></i>
-                                            Expired
+                                            Verlopen
                                         </span>
                                     @elseif($parcel->expiry_status === 'Expiring Soon')
                                         <span class="badge badge-warning">
                                             <i class="fas fa-clock"></i>
-                                            Expiring Soon
+                                            Bijna Verlopen
                                         </span>
                                     @endif
                                 @endif
@@ -279,37 +282,37 @@
                             </td>
                             <td>
                                 <div class="btn-group">
-                                    <a 
-                                        href="{{ route('food-parcels.show', $parcel->id) }}" 
+                                    <a
+                                        href="{{ route('food-parcels.show', $parcel->id) }}"
                                         class="btn btn-info btn-sm"
-                                        title="View Details"
+                                        title="Bekijk Details"
                                     >
                                         <i class="fas fa-eye"></i>
-                                        View
+                                        Bekijken
                                     </a>
-                                    <a 
-                                        href="{{ route('food-parcels.edit', $parcel->id) }}" 
+                                    <a
+                                        href="{{ route('food-parcels.edit', $parcel->id) }}"
                                         class="btn btn-warning btn-sm"
-                                        title="Edit Parcel"
+                                        title="Bewerk Pakket"
                                     >
                                         <i class="fas fa-edit"></i>
-                                        Edit
+                                        Bewerken
                                     </a>
-                                    <form 
-                                        action="{{ route('food-parcels.destroy', $parcel->id) }}" 
-                                        method="POST" 
+                                    <form
+                                        action="{{ route('food-parcels.destroy', $parcel->id) }}"
+                                        method="POST"
                                         style="display: inline;"
-                                        onsubmit="return confirm('Are you sure you want to delete this food parcel?')"
+                                        onsubmit="return confirm('Weet u zeker dat u dit voedselpakket wilt verwijderen?')"
                                     >
                                         @csrf
                                         @method('DELETE')
-                                        <button 
-                                            type="submit" 
+                                        <button
+                                            type="submit"
                                             class="btn btn-danger btn-sm"
-                                            title="Delete Parcel"
+                                            title="Verwijder Pakket"
                                         >
                                             <i class="fas fa-trash"></i>
-                                            Delete
+                                            Verwijderen
                                         </button>
                                     </form>
                                 </div>
@@ -320,17 +323,17 @@
                             <td colspan="7" class="text-center">
                                 <div style="padding: 2rem;">
                                     <i class="fas fa-box" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
-                                    <h3>No Food Parcels Found</h3>
+                                    <h3>Er zijn geen voedselpakketten beschikbaar om weer te geven.</h3>
                                     <p class="text-muted">
                                         @if(!empty($filters))
-                                            No parcels match your search criteria. Try adjusting your filters.
+                                            Geen pakketten komen overeen met uw zoekcriteria. Probeer uw filters aan te passen.
                                         @else
-                                            Start by creating your first food parcel.
+                                            Begin met het maken van uw eerste voedselpakket.
                                         @endif
                                     </p>
                                     <a href="{{ route('food-parcels.create') }}" class="btn btn-primary">
                                         <i class="fas fa-plus"></i>
-                                        Create First Parcel
+                                        Nieuw Voedselpakket Toevoegen
                                     </a>
                                 </div>
                             </td>
@@ -346,9 +349,9 @@
             <div style="margin-top: 1rem; padding: 1rem; background: var(--light-bg); border-radius: var(--border-radius);">
                 <small class="text-muted">
                     <i class="fas fa-info-circle"></i>
-                    Showing {{ $foodParcels->count() }} food parcel(s)
+                    {{ $foodParcels->count() }} voedselpakket(ten) worden weergegeven
                     @if(!empty($filters))
-                        with applied filters
+                        met toegepaste filters
                     @endif
                 </small>
             </div>
@@ -362,33 +365,33 @@
     .table-container {
         font-size: 0.8rem;
     }
-    
+
     .btn-group {
         flex-direction: column;
         gap: 0.25rem;
     }
-    
+
     .btn-sm {
         padding: 0.25rem 0.5rem;
         font-size: 0.7rem;
     }
-    
+
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
     }
-    
+
     .card-header {
         flex-direction: column;
         align-items: stretch;
         gap: 1rem;
     }
-    
+
     .search-container {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .search-container .form-group {
         width: 100%;
     }
@@ -398,11 +401,11 @@
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .table {
         min-width: 600px;
     }
-    
+
     .btn-group .btn {
         width: 100%;
         margin-bottom: 0.25rem;
@@ -414,12 +417,12 @@
     .btn, .search-container, .no-print {
         display: none !important;
     }
-    
+
     .card {
         box-shadow: none;
         border: 1px solid #ddd;
     }
-    
+
     .table {
         font-size: 0.8rem;
     }
@@ -542,14 +545,14 @@
 function toggleDropdown(dropdownId) {
     const dropdown = document.getElementById(dropdownId);
     const allDropdowns = document.querySelectorAll('.dropdown-menu');
-    
+
     // Close all other dropdowns
     allDropdowns.forEach(menu => {
         if (menu.id !== dropdownId) {
             menu.classList.remove('show');
         }
     });
-    
+
     // Toggle the clicked dropdown
     dropdown.classList.toggle('show');
 }
@@ -560,13 +563,13 @@ function toggleDropdown(dropdownId) {
 document.addEventListener('click', function(event) {
     const dropdowns = document.querySelectorAll('.dropdown');
     let clickedInsideDropdown = false;
-    
+
     dropdowns.forEach(dropdown => {
         if (dropdown.contains(event.target)) {
             clickedInsideDropdown = true;
         }
     });
-    
+
     if (!clickedInsideDropdown) {
         document.querySelectorAll('.dropdown-menu').forEach(menu => {
             menu.classList.remove('show');
@@ -580,11 +583,11 @@ document.addEventListener('click', function(event) {
 function toggleSelectAll() {
     const selectAllCheckbox = document.getElementById('selectAll');
     const rowCheckboxes = document.querySelectorAll('.row-checkbox');
-    
+
     rowCheckboxes.forEach(checkbox => {
         checkbox.checked = selectAllCheckbox.checked;
     });
-    
+
     updateBulkActions();
 }
 
@@ -596,10 +599,10 @@ function updateBulkActions() {
     const bulkActionsBtn = document.getElementById('bulkActionsBtn');
     const selectAllCheckbox = document.getElementById('selectAll');
     const allRowCheckboxes = document.querySelectorAll('.row-checkbox');
-    
+
     // Enable/disable bulk actions button
     bulkActionsBtn.disabled = selectedCheckboxes.length === 0;
-    
+
     // Update select all checkbox state
     if (selectedCheckboxes.length === 0) {
         selectAllCheckbox.indeterminate = false;
@@ -618,33 +621,33 @@ function updateBulkActions() {
  */
 function bulkUpdateStatus(status) {
     const selectedCheckboxes = document.querySelectorAll('.row-checkbox:checked');
-    
+
     if (selectedCheckboxes.length === 0) {
-        alert('Please select at least one food parcel to update.');
+        alert('Selecteer ten minste één voedselpakket om bij te werken.');
         return;
     }
-    
-    const statusText = status ? 'activate' : 'deactivate';
-    if (!confirm(`Are you sure you want to ${statusText} ${selectedCheckboxes.length} selected food parcel(s)?`)) {
+
+    const statusText = status ? 'activeren' : 'deactiveren';
+    if (!confirm(`Weet u zeker dat u ${selectedCheckboxes.length} geselecteerde voedselpakket(ten) wilt ${statusText}?`)) {
         return;
     }
-    
+
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = '{{ route("food-parcels.bulk.update-status") }}';
-    
+
     const csrfToken = document.createElement('input');
     csrfToken.type = 'hidden';
     csrfToken.name = '_token';
     csrfToken.value = '{{ csrf_token() }}';
     form.appendChild(csrfToken);
-    
+
     const statusInput = document.createElement('input');
     statusInput.type = 'hidden';
     statusInput.name = 'status';
     statusInput.value = status ? '1' : '0';
     form.appendChild(statusInput);
-    
+
     selectedCheckboxes.forEach(checkbox => {
         const input = document.createElement('input');
         input.type = 'hidden';
@@ -652,7 +655,7 @@ function bulkUpdateStatus(status) {
         input.value = checkbox.value;
         form.appendChild(input);
     });
-    
+
     document.body.appendChild(form);
     form.submit();
 }
@@ -662,16 +665,16 @@ function bulkUpdateStatus(status) {
  */
 function bulkDelete() {
     const selectedCheckboxes = document.querySelectorAll('.row-checkbox:checked');
-    
+
     if (selectedCheckboxes.length === 0) {
-        alert('Please select at least one food parcel to delete.');
+        alert('Selecteer ten minste één voedselpakket om te verwijderen.');
         return;
     }
-    
-    if (!confirm(`Are you sure you want to delete ${selectedCheckboxes.length} selected food parcel(s)? This action cannot be undone!`)) {
+
+    if (!confirm(`Weet u zeker dat u ${selectedCheckboxes.length} geselecteerde voedselpakket(ten) wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt!`)) {
         return;
     }
-    
+
     const form = document.getElementById('bulkActionsForm');
     form.action = '{{ route("food-parcels.bulk.delete") }}';
     form.submit();
