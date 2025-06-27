@@ -161,15 +161,44 @@ class StockController extends Controller
             'quantity_supplied' => 'nullable|integer|min:0',
         ]);
 
-        $quantityInStock = (int) $request->input('quantity_in_stock');
-        $quantityDelivered = $request->input('quantity_delivered') !== null ? (int) $request->input('quantity_delivered') : 0;
-        $quantitySupplied = $request->input('quantity_supplied') !== null ? (int) $request->input('quantity_supplied') : 0;
+        // Get the current stock
+        $stock = DB::table('stocks')->where('id', $id)->first();
+        if (!$stock) {
+            return back()->withErrors(['stock' => 'Stock not found.']);
+        }
 
+        $newDelivered = $request->input('quantity_delivered') !== null ? (int) $request->input('quantity_delivered') : 0;
+        $newSupplied = $request->input('quantity_supplied') !== null ? (int) $request->input('quantity_supplied') : 0;
+
+        // Only update if delivered or supplied is different
+        if (
+            $newDelivered == 0 &&
+            $newSupplied == 0
+        ) {
+            return back()->with('custom_error', 'No changes detected. Nothing was updated.');
+        }
+
+        // Calculate the difference (delta) for delivered and supplied
+        $deltaDelivered = $newDelivered;
+        $deltaSupplied = $newSupplied;
+
+        // Prevent subtracting more than available in stock
+        if ($deltaSupplied > ($stock->quantity_in_stock + $deltaDelivered)) {
+            return back()
+                ->withErrors(['quantity_supplied' => 'Uitdelen niet mogelijk: onvoldoende voorraad beschikbaar'])
+                ->withInput()
+                ->with('custom_error', 'Uitdelen niet mogelijk: onvoldoende voorraad beschikbaar');
+        }
+
+        // Update stock: add delivered, subtract supplied
+        $quantityInStock = max(0, (int) $stock->quantity_in_stock + $deltaDelivered - $deltaSupplied);
+
+        // Save the last entered values for delivered and supplied
         DB::statement('CALL update_stocks(?, ?, ?, ?)', [
             $id,
             $quantityInStock,
-            $quantityDelivered,
-            $quantitySupplied,
+            $newDelivered,
+            $newSupplied,
         ]);
 
         return redirect()->route('stocks.index')->with('success', 'Stock quantities updated successfully.');
