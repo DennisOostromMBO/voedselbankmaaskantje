@@ -1,4 +1,4 @@
-DELIMITER //
+
 
 CREATE PROCEDURE update_stocks(
     IN p_id INT,
@@ -14,6 +14,4 @@ BEGIN
         quantity_supplied = p_quantity_supplied,
         updated_at = NOW()
     WHERE id = p_id;
-END //
-
-DELIMITER ;
+END;
