@@ -92,6 +92,11 @@ class SupplierController extends Controller
 
         $validated = $request->validated();
 
+        // Ensure upcoming_delivery_at is formatted as Y-m-d H:i:s or null
+        $validated['upcoming_delivery_at'] = $request->input('upcoming_delivery_at')
+            ? date('Y-m-d H:i:s', strtotime($request->input('upcoming_delivery_at')))
+            : null;
+
         Supplier::updateFromSP($id, $validated);
 
         return redirect()->route('suppliers.index')->with('success', 'Leverancier succesvol bijgewerkt.');
