@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             ContactSeeder::class,
             WishSeeder::class,
             RoleSeeder::class,
+            EmployeeSeeder::class,
+            VolunteerSeeder::class,
         ]);
     }
 }
