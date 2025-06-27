@@ -13,6 +13,12 @@ return new class extends Migration
             $table->foreignId('product_category_id')->constrained('product_categories')->onDelete('cascade');
             $table->boolean('is_active');
             $table->text('note')->nullable();
+            $table->date('ontvangdatum')->nullable();
+            $table->date('uigeleverddatum')->nullable();
+            $table->string('eenheid', 50)->nullable();
+            $table->unsignedInteger('aantalOpVoorad')->default(0);
+            $table->unsignedInteger('aantalUigegeven')->default(0);
+            $table->unsignedInteger('aantalBijgeleverd')->default(0);
             $table->timestamps();
         });
     }

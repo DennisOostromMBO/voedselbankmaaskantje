@@ -10,8 +10,12 @@ class Stock extends Model
 {
     use HasFactory;
 
-    public static function getAllWithContacts()
+    public static function GetAllStocks()
      {
-        return DB::select('CALL get_all_suppliers()');
+        return DB::select('CALL get_all_stocks()');
      }
+     public static function createStocks()
+        {
+            return DB::select('CALL create_stocks()');
+        }
 }
