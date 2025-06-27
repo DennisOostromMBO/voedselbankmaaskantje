@@ -152,4 +152,35 @@ class StockController extends Controller
         ]);
         return redirect()->route('stocks.index')->with('success', 'Stock created successfully.');
     }
+
+    public function updateQuantities(Request $request, $id)
+    {
+        $request->validate([
+            'quantity_in_stock' => 'required|integer|min:0',
+            'quantity_delivered' => 'nullable|integer|min:0',
+            'quantity_supplied' => 'nullable|integer|min:0',
+        ]);
+
+        $quantityInStock = (int) $request->input('quantity_in_stock');
+        $quantityDelivered = $request->input('quantity_delivered') !== null ? (int) $request->input('quantity_delivered') : 0;
+        $quantitySupplied = $request->input('quantity_supplied') !== null ? (int) $request->input('quantity_supplied') : 0;
+
+        DB::statement('CALL update_stocks(?, ?, ?, ?)', [
+            $id,
+            $quantityInStock,
+            $quantityDelivered,
+            $quantitySupplied,
+        ]);
+
+        return redirect()->route('stocks.index')->with('success', 'Stock quantities updated successfully.');
+    }
+
+    public function edit($id)
+    {
+        $stock = DB::table('stocks')->where('id', $id)->first();
+        if (!$stock) {
+            abort(404);
+        }
+        return view('Stocks.update', compact('stock'));
+    }
 }
