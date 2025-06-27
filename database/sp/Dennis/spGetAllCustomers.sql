@@ -1,4 +1,4 @@
-DELIMITER //
+DROP PROCEDURE IF EXISTS spGetAllCustomers;
 CREATE PROCEDURE spGetAllCustomers()
 BEGIN
     SELECT
@@ -15,5 +15,4 @@ BEGIN
     INNER JOIN families ON customers.family_id = families.id
     INNER JOIN persons ON families.person_id = persons.id
     LEFT JOIN wishes ON customers.id = wishes.customer_id;
-END //
-DELIMITER ;
+END;

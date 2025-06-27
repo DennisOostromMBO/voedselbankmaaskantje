@@ -11,6 +11,11 @@
     <div class="max-w-[98vw] mx-auto mt-8 px-2">
         <h1 class="text-2xl font-bold mb-4">Klanten</h1>
         <div class="bg-white rounded-xl shadow border border-blue-100">
+            @if(count($customers) === 0)
+                <div class="text-red-600 text-center py-8 text-lg font-semibold">
+                    Momenteel geen klantgegevens beschikbaar.
+                </div>
+            @else
             <table class="w-full text-sm">
                 <thead class="bg-gradient-to-r from-blue-600 to-blue-400 text-white">
                     <tr>
@@ -53,9 +58,8 @@
                     @endforeach
                 </tbody>
             </table>
+            @endif
         </div>
     </div>
-</body>
-</html>
 </body>
 </html>
