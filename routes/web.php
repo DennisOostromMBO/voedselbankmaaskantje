@@ -18,7 +18,7 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-require __DIR__.'/Wassim.php';
-require __DIR__.'/Mahdi.php';
-require __DIR__.'/Dennis.php';
-require __DIR__.'/Daniel.php';
+require __DIR__.'/Supplier.php';
+require __DIR__.'/Foodparcel.php';
+require __DIR__.'/Customer.php';
+require __DIR__.'/Stock.php';
