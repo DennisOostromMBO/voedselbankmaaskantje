@@ -21,8 +21,8 @@ class StockController extends Controller
     }
     public function create()
     {
-        $stocks = Stock::createStocks();
-        return view('Stocks.Create', compact('stocks'));
+        // Just return the create view, do not call any stored procedure here
+        return view('Stocks.create');
     }
     
     public function store(Request $request)
