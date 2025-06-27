@@ -26,6 +26,18 @@
                     }, 5000);
                 </script>
             @endif
+            @if(session('error'))
+                <div id="error-message" class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-red-500 text-white px-6 py-3 rounded shadow-lg flex items-center gap-2 transition-opacity duration-500">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ session('error') }}
+                </div>
+                <script>
+                    setTimeout(function() {
+                        var msg = document.getElementById('error-message');
+                        if(msg) msg.style.opacity = 0;
+                    }, 5000);
+                </script>
+            @endif
             <div class="card">
                 <div class="card-header">
                     <div>
@@ -71,8 +83,9 @@
                 </div>
 
                 <!-- Table -->
+                <div id="delete-tooltip-container"></div>
                 <div class="table-container">
-                    <table class="table">
+                    <table class="table w-full">
                         <thead>
                             <tr>
                                 <th><i class="fas fa-truck"></i> Naam</th>
@@ -118,19 +131,27 @@
                                                     Kan niet bewerken: geplande levering
                                                 </span>
                                             </span>
+                                            <button
+                                                type="button"
+                                                class="btn btn-danger btn-sm opacity-50 cursor-not-allowed"
+                                                onclick="showDeleteTooltip()"
+                                                tabindex="0"
+                                            >
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         @else
                                             <a href="{{ route('suppliers.edit', $supplier->id) }}" class="btn btn-warning btn-sm">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+                                            <form action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Weet je zeker dat je deze leverancier wilt verwijderen?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
                                         @endif
-                                        <form action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm"
-                                                onclick="return confirm('Weet je zeker dat je deze leverancier wilt verwijderen?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -142,6 +163,24 @@
                         </tbody>
                     </table>
                 </div>
+                <script>
+                function showDeleteTooltip() {
+                    var container = document.getElementById('delete-tooltip-container');
+                    container.innerHTML = `
+                        <div id="delete-error-message" class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-red-500 text-white px-6 py-3 rounded shadow-lg flex items-center gap-2 transition-opacity duration-500">
+                            <i class="fas fa-exclamation-circle"></i>
+                            Kan niet verwijderen: er is een geplande levering voor deze leverancier.
+                        </div>
+                    `;
+                    setTimeout(function() {
+                        var msg = document.getElementById('delete-error-message');
+                        if(msg) msg.style.opacity = 0;
+                        setTimeout(function() {
+                            container.innerHTML = '';
+                        }, 500);
+                    }, 4000);
+                }
+                </script>
                 <!-- Pagination -->
                 <div class="pagination flex justify-center items-center gap-2 mt-6">
                     {{ $suppliers->links('vendor.pagination.custom') }}
