@@ -43,6 +43,7 @@
                         <thead>
                             <tr>
                                 <th>Product Name</th>
+                                <th>Category</th>
                                 <th>Number</th>
                                 <th>Ontvangdatum</th>
                                 <th>Uigeleverddatum</th>
@@ -56,6 +57,7 @@
                             @foreach($stocks as $stock)
                                 <tr>
                                     <td>{{ $stock->product_name }}</td>
+                                    <td>{{ $stock->category_name }}</td>
                                     <td>{{ $stock->number }}</td>
                                     <td>{{ $stock->ontvangdatum }}</td>
                                     <td>{{ $stock->uigeleverddatum }}</td>
