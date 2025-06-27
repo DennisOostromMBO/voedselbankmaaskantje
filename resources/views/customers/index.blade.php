@@ -10,6 +10,7 @@
 <body class="bg-gray-50 font-sans" style="font-family: 'Noto Color Emoji', sans-serif;">
     <div class="max-w-[98vw] mx-auto mt-8 px-2">
         <h1 class="text-2xl font-bold mb-4">Klanten</h1>
+        <a href="{{ route('customers.create') }}" class="mb-4 inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold shadow transition">Voeg klant toe</a>
         @if(session('success'))
             <div class="mb-4 text-green-700 bg-green-100 border border-green-300 rounded px-4 py-2 text-center font-semibold">
                 {{ session('success') }}

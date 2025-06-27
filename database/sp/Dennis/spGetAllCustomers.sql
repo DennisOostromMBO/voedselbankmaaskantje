@@ -23,5 +23,6 @@ BEGIN
     INNER JOIN customers ON contacts.customer_id = customers.id
     INNER JOIN families ON customers.family_id = families.id
     INNER JOIN persons ON families.person_id = persons.id
-    LEFT JOIN wishes ON customers.id = wishes.customer_id;
+    LEFT JOIN wishes ON customers.id = wishes.customer_id
+    ORDER BY customers.id DESC;
 END;
