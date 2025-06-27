@@ -7,6 +7,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Example CRUD page route
+Route::get('/example-crud', function () {
+    return view('example-crud');
+})->name('example-crud');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
