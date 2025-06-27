@@ -51,23 +51,23 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Ontvangdatum</label>
-                            <input type="date" name="ontvangdatum" class="form-control" required value="{{ date('Y-m-d') }}">
+                            <input type="date" name="received_date" class="form-control" required value="{{ date('Y-m-d') }}">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Uigeleverddatum</label>
-                            <input type="date" name="uigeleverddatum" class="form-control">
+                            <input type="date" name="delivered_date" class="form-control">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Aantal Op Voorad</label>
-                            <input type="number" name="aantalOpVoorad" class="form-control" required>
+                            <input type="number" name="quantity_in_stock" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Aantal Uigegeven</label>
-                            <input type="number" name="aantalUigegeven" class="form-control" required>
+                            <input type="number" name="quantity_delivered" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Aantal Bijgeleverd</label>
-                            <input type="number" name="aantalBijgeleverd" class="form-control" required>
+                            <input type="number" name="quantity_supplied" class="form-control" required>
                         </div>
                         <!-- Set is_active always to 1 (Ja) and hide the field -->
                         <input type="hidden" name="is_active" value="1">

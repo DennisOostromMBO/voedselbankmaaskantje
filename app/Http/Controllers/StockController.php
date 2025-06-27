@@ -112,15 +112,15 @@ class StockController extends Controller
         $note = trim(($request->input('product_name') ?? '') . ' ' . ($request->input('note') ?? ''));
 
         DB::statement('CALL create_stocks(?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-            $category_id,                              // 1. p_product_category_id
-            $request->input('is_active'),              // 2. p_is_active
-            $note,                                     // 3. p_note (product name + note)
-            $request->input('ontvangdatum'),           // 4. p_ontvangdatum
-            $request->input('uigeleverddatum'),        // 5. p_uigeleverddatum
-            $request->input('eenheid'),                // 6. p_eenheid
-            $request->input('aantalOpVoorad'),         // 7. p_aantalOpVoorad
-            $request->input('aantalUigegeven'),        // 8. p_aantalUigegeven
-            $request->input('aantalBijgeleverd'),      // 9. p_aantalBijgeleverd
+            $category_id,
+            $request->input('is_active'),
+            $note,
+            $request->input('received_date'),
+            $request->input('delivered_date'),
+            $request->input('unit'),
+            $request->input('quantity_in_stock'),
+            $request->input('quantity_delivered'),
+            $request->input('quantity_supplied'),
         ]);
         return redirect()->route('stocks.index')->with('success', 'Stock created successfully.');
     }
