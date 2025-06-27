@@ -24,6 +24,8 @@ class DatabaseSeeder extends Seeder
             ContactSeeder::class,
             WishSeeder::class,
             RoleSeeder::class,
+            VolunteerSeeder::class,
+            EmployeeSeeder::class,
         ]);
     }
 }
