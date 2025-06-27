@@ -64,24 +64,35 @@
                             <tr>
                                 <th><i class="fas fa-hashtag"></i> ID</th>
                                 <th><i class="fas fa-truck"></i> Naam</th>
+                                <th><i class="fas fa-phone"></i> Contactnummer</th>
                                 <th><i class="fas fa-envelope"></i> E-mail</th>
-                                <th><i class="fas fa-phone"></i> Telefoon</th>
+                                <th><i class="fas fa-map-marker-alt"></i> Adres</th>
                                 <th><i class="fas fa-chart-line"></i> Status</th>
                                 <th><i class="fas fa-cogs"></i> Acties</th>
                             </tr>
                         </thead>
                         <tbody>
+                        @forelse($suppliers as $supplier)
                             <tr>
-                                <td>#001</td>
+                                <td>{{ $supplier->id }}</td>
                                 <td>
                                     <div class="d-flex align-center gap-1">
                                         <i class="fas fa-truck" style="color: var(--primary-color);"></i>
-                                        Voedselgroothandel BV
+                                        {{ $supplier->supplier_name ?? '-' }}
                                     </div>
                                 </td>
-                                <td>info@voedselgroothandel.nl</td>
-                                <td>+31 73 1234567</td>
-                                <td><span class="badge badge-success">Actief</span></td>
+                                <td>{{ $supplier->contact_number ?? '-' }}</td>
+                                <td>{{ $supplier->email ?? '-' }}</td>
+                                <td>
+                                    {{ $supplier->full_address ?? '-' }}
+                                </td>
+                                <td>
+                                    @if($supplier->is_active)
+                                        <span class="badge badge-success">Actief</span>
+                                    @else
+                                        <span class="badge badge-danger">Inactief</span>
+                                    @endif
+                                </td>
                                 <td>
                                     <div class="btn-group">
                                         <a href="#" class="btn btn-info btn-sm">
@@ -96,36 +107,16 @@
                                     </div>
                                 </td>
                             </tr>
+                        @empty
                             <tr>
-                                <td>#002</td>
-                                <td>
-                                    <div class="d-flex align-center gap-1">
-                                        <i class="fas fa-truck" style="color: var(--warning-color);"></i>
-                                        VersFruit Import
-                                    </div>
-                                </td>
-                                <td>contact@versfruitimport.nl</td>
-                                <td>+31 6 98765432</td>
-                                <td><span class="badge badge-warning">Inactief</span></td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a href="#" class="btn btn-info btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-warning btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </div>
-                                </td>
+                                <td colspan="7" class="text-center text-[#4b5563]">Geen leveranciers gevonden.</td>
                             </tr>
+                        @endforelse
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Pagination -->
+                <!-- Pagination (optional, static for now) -->
                 <div class="pagination">
                     <a href="#">‹ Vorige</a>
                     <span class="current">1</span>
@@ -138,3 +129,4 @@
     </main>
 </body>
 </html>
+

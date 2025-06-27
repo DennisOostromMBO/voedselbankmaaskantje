@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SupplierController;
 
-Route::get('/suppliers', function () {
-    return view('suppliers.index');
-})->name('suppliers.index');
+Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
+
