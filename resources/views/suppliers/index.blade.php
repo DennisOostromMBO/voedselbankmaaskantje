@@ -97,8 +97,8 @@
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         @if(!empty($supplier->upcoming_delivery_at))
-                                            <span class="relative group">
-                                                <span class="btn btn-warning btn-sm opacity-50 cursor-not-allowed pointer-events-none">
+                                            <span class="relative group cursor-not-allowed">
+                                                <span class="btn btn-warning btn-sm opacity-50 pointer-events-none cursor-not-allowed">
                                                     <i class="fas fa-edit"></i>
                                                 </span>
                                                 <span class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 bg-white border border-red-300 text-xs text-red-600 rounded px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap cursor-not-allowed">
