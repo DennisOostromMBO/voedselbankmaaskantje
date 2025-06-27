@@ -52,10 +52,6 @@
                             <i class="fas fa-plus"></i>
                             Nieuwe Leverancier
                         </a>
-                        <a href="#" class="btn btn-outline">
-                            <i class="fas fa-download"></i>
-                            Exporteren
-                        </a>
                     </div>
                 </div>
 
