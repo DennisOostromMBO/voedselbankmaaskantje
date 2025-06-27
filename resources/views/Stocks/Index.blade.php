@@ -24,6 +24,16 @@
                         </a>
                     </div>
                 </div>
+                @if(session('custom_error'))
+                    <div class="alert alert-danger text-center mb-4">
+                        {{ session('custom_error') }}
+                    </div>
+                @endif
+                @if(session('success'))
+                    <div class="alert alert-success text-center mb-4">
+                        {{ session('success') }}
+                    </div>
+                @endif
                 <div class="table-container">
                     @if(count($stocks) === 0)
                         <div class="alert alert-danger text-center mb-4">
