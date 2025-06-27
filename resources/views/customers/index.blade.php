@@ -83,6 +83,10 @@
             </table>
             @endif
         </div>
+          {{-- Pagination links --}}
+            <div class="mt-4 flex justify-center">
+                {{ $customers->links() }}
+            </div>
     </div>
 </body>
 </html>
