@@ -36,5 +36,27 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
         ]);
+
+        // Assign roles to users (example: user 1 = Directie, user 2 = Magazijnmedewerker, user 3 = Vrijwilliger)
+        DB::table('role_user')->insert([
+            [
+                'user_id' => 1,
+                'role_id' => 1, // Directie
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'user_id' => 2,
+                'role_id' => 2, // Magazijnmedewerker
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'user_id' => 3,
+                'role_id' => 3, // Vrijwilliger
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
     }
 }

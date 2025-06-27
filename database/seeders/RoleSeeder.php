@@ -9,31 +9,32 @@ class RoleSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('roles')->insert([
+        DB::table('roles')->updateOrInsert(
+            ['name' => 'Directie'],
             [
-                'user_id' => 1,
-                'name' => 'admin',
                 'is_active' => true,
-                'comment' => 'Administrator role',
+                'comment' => 'Directie rol',
                 'date_created' => now(),
                 'date_changed' => now(),
-            ],
+            ]
+        );
+        DB::table('roles')->updateOrInsert(
+            ['name' => 'Magazijnmedewerker'],
             [
-                'user_id' => 1,
-                'name' => 'user',
                 'is_active' => true,
-                'comment' => 'Standard user role',
+                'comment' => 'Magazijnmedewerker rol',
                 'date_created' => now(),
                 'date_changed' => now(),
-            ],
+            ]
+        );
+        DB::table('roles')->updateOrInsert(
+            ['name' => 'Vrijwilliger'],
             [
-                'user_id' => 2,
-                'name' => 'manager',
                 'is_active' => true,
-                'comment' => null,
+                'comment' => 'Vrijwilliger rol',
                 'date_created' => now(),
                 'date_changed' => now(),
-            ],
-        ]);
+            ]
+        );
     }
 }
