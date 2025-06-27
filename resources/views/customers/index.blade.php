@@ -56,7 +56,7 @@
                                 </span>
                             </td>
                             <td class="px-2 py-1">
-                                <button class="bg-orange-400 hover:bg-orange-500 text-white px-1 py-0.5 rounded text-xs" title="Bewerken">✏️</button>
+                                <a href="{{ route('customers.edit', $customer->id) }}" class="bg-orange-400 hover:bg-orange-500 text-white px-1 py-0.5 rounded text-xs" title="Bewerken">✏️</a>
                                 @if(empty($customer->has_food_parcel) || !$customer->has_food_parcel)
                                     <button
                                         class="bg-gray-300 text-gray-500 px-1 py-0.5 rounded text-xs cursor-not-allowed"

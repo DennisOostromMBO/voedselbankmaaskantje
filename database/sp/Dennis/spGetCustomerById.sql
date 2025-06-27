@@ -3,10 +3,18 @@ CREATE PROCEDURE spGetCustomerById(IN customerId INT)
 BEGIN
     SELECT
         customers.id,
+        persons.first_name,
+        persons.infix,
+        persons.last_name,
         persons.full_name,
         families.name AS family_name,
         persons.age,
         contacts.full_address,
+        contacts.street,
+        contacts.house_number,
+        contacts.addition,
+        contacts.postcode,
+        contacts.city,
         contacts.mobile,
         contacts.email,
         customers.number AS customer_number,
