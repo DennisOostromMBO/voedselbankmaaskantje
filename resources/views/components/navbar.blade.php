@@ -7,7 +7,6 @@
             <li><a href="/food-parcels" class="nav-link flex items-center gap-2 text-white"><i class="fas fa-box"></i> Voedselpakketten</a></li>
             <li><a href="/stocks" class="nav-link flex items-center gap-2 text-white"><i class="fas fa-warehouse"></i> Voorraad</a></li>
             <li><a href="/suppliers" class="nav-link flex items-center gap-2 text-white"><i class="fas fa-truck"></i> Leverancier</a></li>
-            <li><a href="#" class="nav-link flex items-center gap-2 text-white"><i class="fas fa-user-circle"></i> Profile</a></li>
         </ul>
     </nav>
 </header>
