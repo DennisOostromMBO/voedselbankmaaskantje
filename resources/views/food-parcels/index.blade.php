@@ -335,12 +335,20 @@
             </form>
         </div>
 
+        <!-- Pagination Links -->
+        @if($foodParcels->hasPages())
+            <div class="pagination-wrapper" style="margin-top: 1rem; display: flex; justify-content: center;">
+                {{ $foodParcels->links() }}
+            </div>
+        @endif
+
         @if($foodParcels->count() > 0)
             <!-- Results Summary -->
             <div style="margin-top: 1rem; padding: 1rem; background: var(--light-bg); border-radius: var(--border-radius);">
                 <small class="text-muted">
                     <i class="fas fa-info-circle"></i>
-                    {{ $foodParcels->count() }} voedselpakket(ten) worden weergegeven
+                    Pagina {{ $foodParcels->currentPage() }} van {{ $foodParcels->lastPage() }}
+                    ({{ $foodParcels->total() }} totaal, {{ $foodParcels->count() }} op deze pagina)
                     @if(!empty($filters))
                         met toegepaste filters
                     @endif
@@ -400,6 +408,20 @@
     .btn-group .btn {
         width: 100%;
         margin-bottom: 0.25rem;
+    }
+
+    /* Responsive pagination */
+    .pagination-wrapper .pagination {
+        gap: 0.125rem;
+        flex-wrap: wrap;
+    }
+
+    .pagination-wrapper .pagination li a,
+    .pagination-wrapper .pagination li span {
+        padding: 0.375rem 0.5rem;
+        font-size: 0.75rem;
+        min-width: 2rem;
+        text-align: center;
     }
 }
 
@@ -524,6 +546,70 @@
     border: solid white;
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
+}
+
+/* Light Mode Pagination Styling */
+.pagination-wrapper {
+    margin: 1rem 0;
+    padding: 0.5rem;
+    background: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-wrapper .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 0.25rem;
+}
+
+.pagination-wrapper .pagination li {
+    display: inline-block;
+}
+
+.pagination-wrapper .pagination li a,
+.pagination-wrapper .pagination li span {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    text-decoration: none;
+    color: #374151;
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    font-weight: 500;
+    min-width: 2.5rem;
+    text-align: center;
+}
+
+.pagination-wrapper .pagination li a:hover {
+    background: #f9fafb;
+    border-color: #6b7280;
+    color: #1f2937;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-wrapper .pagination li.active span {
+    background: #ffffff;
+    color: #1f2937;
+    border-color: #374151;
+    border-width: 2px;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-wrapper .pagination li.disabled span {
+    color: #9ca3af;
+    background: #ffffff;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 </style>
 

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * FoodParcel Model
@@ -433,6 +434,67 @@ class FoodParcel extends Model
                 'today' => 0,
                 'this_week' => 0
             ];
+        }
+    }
+
+    /**
+     * Get all food parcels with pagination support.
+     * Uses the same logic as getAllWithDetails but with pagination.
+     * 
+     * @param array $filters Optional filters (customer_id, is_active, search)
+     * @param int $perPage Number of items per page (default: 5)
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public static function getAllWithDetailsPaginated(array $filters = [], int $perPage = 5)
+    {
+        try {
+            // For stored procedure results, we need to handle pagination manually
+            // since stored procedures don't support Laravel's built-in pagination
+            
+            // Get all results first (this could be optimized with stored procedure pagination)
+            $allResults = self::getAllWithDetails($filters);
+            
+            // Get current page from request
+            $currentPage = request()->get('page', 1);
+            $currentPage = is_numeric($currentPage) ? (int)$currentPage : 1;
+            
+            // Calculate offset
+            $offset = ($currentPage - 1) * $perPage;
+            
+            // Get items for current page
+            $items = $allResults->slice($offset, $perPage);
+            
+            // Create paginator instance
+            $paginator = new LengthAwarePaginator(
+                $items,
+                $allResults->count(),
+                $perPage,
+                $currentPage,
+                [
+                    'path' => request()->url(),
+                    'pageName' => 'page',
+                ]
+            );
+            
+            // Preserve query parameters (filters) in pagination links
+            $paginator->appends(request()->query());
+            
+            return $paginator;
+            
+        } catch (\Exception $e) {
+            Log::error('Failed to get paginated food parcels: ' . $e->getMessage());
+            
+            // Return empty paginator on error
+            return new LengthAwarePaginator(
+                collect([]),
+                0,
+                $perPage,
+                1,
+                [
+                    'path' => request()->url(),
+                    'pageName' => 'page',
+                ]
+            );
         }
     }
 }

@@ -42,8 +42,8 @@ class FoodParcelController extends Controller
             // Remove null values from filters
             $filters = array_filter($filters, fn($value) => $value !== null && $value !== '');
 
-            // Get food parcels with details using stored procedure
-            $foodParcels = FoodParcel::getAllWithDetails($filters);
+            // Get food parcels with pagination (5 per page)
+            $foodParcels = FoodParcel::getAllWithDetailsPaginated($filters, 5);
 
             // Get statistics for dashboard
             $statistics = FoodParcel::getStatistics();
