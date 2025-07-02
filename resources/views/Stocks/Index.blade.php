@@ -21,18 +21,18 @@
                     </div>
                     <div class="btn-group">
                         <a href="{{ route('stocks.create') }}" class="btn btn-primary btn-sm">
-                            <i class="fa fa-plus"></i> Add Stock
+                            <i class="fa fa-plus"></i> Nieuw stock
                         </a>
                     </div>
                 </div>
                 @if(session('custom_error'))
                     <div class="alert alert-danger text-center mb-4">
-                        {{ session('custom_error') }}
+                        Fout: {{ session('custom_error') }}
                     </div>
                 @endif
                 @if(session('success'))
                     <div class="alert alert-success text-center mb-4">
-                        {{ session('success') }}
+                        Succes: {{ session('success') }}
                     </div>
                 @endif
                 <div class="table-container">
@@ -80,11 +80,11 @@
                                     <td>{{ $stock->quantity_supplied }}</td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="{{ route('stocks.edit', $stock->id) }}" class="btn btn-warning btn-sm">Update</a>
+                                            <a href="{{ route('stocks.edit', $stock->id) }}" class="btn btn-warning btn-sm">Bewerken</a>
                                             <form action="{{ route('stocks.destroy', $stock->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Weet je zeker dat je deze voorraad wilt verwijderen?')">Delete</button>
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Weet je zeker dat je deze voorraad wilt verwijderen?')">verwijder</button>
                                             </form>
                                         </div>
                                     </td>

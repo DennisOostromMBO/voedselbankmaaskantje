@@ -46,7 +46,7 @@
 </head>
 <body>
     <div class="update-card">
-        <h2>Update Stock Quantities</h2>
+        <h2>Voorraad bijwerken</h2>
         {{-- Show custom error and validation errors --}}
         @if(session('custom_error'))
         @endif
@@ -65,11 +65,13 @@
                 <li>
                     <strong>Productnaam:</strong>
                     @php
-                        $typedProduct = '';
-                        if (!empty($stock->note)) {
-                            $typedProduct = trim(explode(' ', $stock->note)[0]);
+                        // Prefer product_name if available (for seeded products), else use first word of note
+                        $displayProduct = '';
+                        if (isset($stock->product_name) && !empty($stock->product_name)) {
+                            $displayProduct = $stock->product_name;
+                        } elseif (!empty($stock->note)) {
+                            $displayProduct = trim(explode(' ', $stock->note)[0]);
                         }
-                        $displayProduct = $typedProduct ?: ($stock->product_name ?? '');
                     @endphp
                     {{ $displayProduct }}
                 </li>
@@ -91,8 +93,8 @@
                 <input type="number" name="quantity_supplied" class="form-control" min="0" value="{{ old('quantity_supplied', $stock->quantity_supplied) }}">
             </div>
             <div class="btn-group">
-                <button type="submit" class="btn btn-primary">Update</button>
-                <a href="{{ route('stocks.index') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Bewerken</button>
+                <a href="{{ route('stocks.index') }}" class="btn btn-secondary">Annuleren</a>
             </div>
         </form>
     </div>

@@ -110,7 +110,7 @@ class FoodParcelController extends Controller
 
             return view('food-parcels.create', compact('customers', 'stocks'));
         } catch (\Exception $e) {
-            Log::error('Error loading food parcel create form: ' . $e->getMessage());
+            Log::error('Fout bij het laden van het aanmaakformulier. Probeer het opnieuw: ' . $e->getMessage());
 
             return redirect()->route('food-parcels.index')
                 ->with('error', 'Fout bij het laden van het aanmaakformulier. Probeer het opnieuw.');
@@ -150,7 +150,7 @@ class FoodParcelController extends Controller
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (\Exception $e) {
-            Log::error('Error creating food parcel: ' . $e->getMessage());
+            Log::error('Fout bij het aanmaken van voedselpakket. Probeer het opnieuw: ' . $e->getMessage());
 
             return redirect()->back()
                 ->with('error', 'Fout bij het aanmaken van voedselpakket. Probeer het opnieuw.')
@@ -177,7 +177,7 @@ class FoodParcelController extends Controller
 
             return view('food-parcels.show', compact('foodParcel'));
         } catch (\Exception $e) {
-            Log::error('Error showing food parcel: ' . $e->getMessage());
+            Log::error('Fout bij het laden van voedselpakket details. Probeer het opnieuw: ' . $e->getMessage());
 
             return redirect()->route('food-parcels.index')
                 ->with('error', 'Fout bij het laden van voedselpakket details. Probeer het opnieuw.');
@@ -234,7 +234,7 @@ class FoodParcelController extends Controller
 
             return view('food-parcels.edit', compact('foodParcel', 'customers', 'stocks'));
         } catch (\Exception $e) {
-            Log::error('Error loading food parcel edit form: ' . $e->getMessage());
+            Log::error('Fout bij het laden van het bewerkingsformulier. Probeer het opnieuw: ' . $e->getMessage());
 
             return redirect()->route('food-parcels.index')
                 ->with('error', 'Fout bij het laden van het bewerkingsformulier. Probeer het opnieuw.');
@@ -294,7 +294,7 @@ class FoodParcelController extends Controller
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (\Exception $e) {
-            Log::error('Error updating food parcel: ' . $e->getMessage());
+            Log::error('Fout bij het bijwerken van voedselpakket. Probeer het opnieuw: ' . $e->getMessage());
 
             return redirect()->back()
                 ->with('error', 'Fout bij het bijwerken van voedselpakket. Probeer het opnieuw.')
@@ -326,7 +326,7 @@ class FoodParcelController extends Controller
             return redirect()->route('food-parcels.index')
                 ->with('success', 'Voedselpakket succesvol verwijderd.');
         } catch (\Exception $e) {
-            Log::error('Error deleting food parcel: ' . $e->getMessage());
+            Log::error('Fout bij het verwijderen van voedselpakket. Probeer het opnieuw: ' . $e->getMessage());
 
             return redirect()->route('food-parcels.index')
                 ->with('error', 'Fout bij het verwijderen van voedselpakket. Probeer het opnieuw.');

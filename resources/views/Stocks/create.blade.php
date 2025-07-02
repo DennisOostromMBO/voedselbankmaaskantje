@@ -67,15 +67,15 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Ontvangdatum</label>
+                            <label class="form-label">Ontvangsdatum</label>
                             <input type="date" name="received_date" class="form-control" required value="{{ date('Y-m-d') }}">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Uigeleverddatum</label>
+                            <label class="form-label">Uitleverdatum</label>
                             <input type="date" name="delivered_date" class="form-control">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Aantal Op Voorad</label>
+                            <label class="form-label">Aantal Op Vooraad</label>
                             <input type="number" name="quantity_in_stock" class="form-control" required min="0">
                         </div>
                         <!-- Set is_active always to 1 (Ja) and hide the field -->
