@@ -41,7 +41,7 @@ class PersonSeeder extends Seeder
             // Johnson family (2 people)
             [
                 'first_name' => 'Jane',
-                'infix' => 'A.',
+                'infix' => 'A',
                 'last_name' => 'Johnson',
                 'age' => 28,
                 'is_active' => true,
