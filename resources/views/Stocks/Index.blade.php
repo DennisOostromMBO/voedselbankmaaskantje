@@ -1,18 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Stock List</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-    @include('components.navbar')
-    <main class="main-content">
-        <div class="container">
+@extends('layouts.app-sections')
+
+@section('title', 'Stock List')
+
+@section('content')
+<div class="container">
             <div class="card">
                 <div class="card-header">
                     <div>
@@ -96,6 +87,4 @@
                 </div>
             </div>
         </div>
-    </main>
-</body>
-</html>
+@endsection

@@ -122,26 +122,37 @@ class Stock extends Model
      */
     public static function getForDropdown()
     {
-        // Call the stored procedure
-        $results = collect(\DB::select('CALL sp_get_food_parcel_stats()'));
-
-        // Map results to ensure required fields exist for dropdowns
-        return $results->map(function ($item) {
-            return (object)[
-                'id' => $item->stock_id ?? $item->id ?? null,
-                'display_name' => $item->display_name ?? $item->product_name ?? 'Onbekend',
-                'product_name' => $item->product_name ?? '',
-                'category_name' => $item->category_name ?? '',
-                'quantity_in_stock' => $item->quantity_in_stock ?? 0,
-                'unit' => $item->unit ?? 'stuks',
-                'is_active' => $item->is_active ?? true,
-                'received_date' => $item->received_date ?? null,
-                'delivered_date' => $item->delivered_date ?? null,
-            ];
-        })->filter(function ($item) {
-            // Only include items with a valid id
-            return !is_null($item->id);
-        })->values();
+        try {
+            // Use Mahdi's stored procedure
+            $results = DB::select('CALL get_all_stocks()');
+            
+            return collect($results)
+                ->filter(function ($stock) {
+                    return $stock->is_active && ($stock->quantity_in_stock > 0);
+                })
+                ->map(function ($stock) {
+                    $productName = $stock->product_name ?? 'Onbekend Product';
+                    $categoryName = $stock->category_name ?? 'Onbekende Categorie';
+                    $quantity = $stock->quantity_in_stock ?? 0;
+                    $unit = $stock->unit ?? 'stuks';
+                    
+                    return (object)[
+                        'id' => $stock->id,
+                        'display_name' => "{$productName} - {$categoryName} (Voorraad: {$quantity} {$unit})",
+                        'product_name' => $productName,
+                        'category_name' => $categoryName,
+                        'quantity_in_stock' => $quantity,
+                        'unit' => $unit,
+                        'is_active' => $stock->is_active,
+                        'received_date' => $stock->received_date,
+                        'delivered_date' => $stock->delivered_date,
+                        'note' => $stock->note,
+                    ];
+                });
+        } catch (\Exception $e) {
+            Log::error('Failed to get stocks for dropdown: ' . $e->getMessage());
+            return collect([]);
+        }
     }
 
     /**

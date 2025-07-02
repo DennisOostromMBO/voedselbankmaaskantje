@@ -1,6 +1,6 @@
 @extends('layouts.app-sections')
 
-@section('title', 'Voedselpakket Wijzigen')
+@section('title', 'Nieuw Voedselpakket Toevoegen')
 
 @section('content')
 <div class="container">
@@ -24,18 +24,14 @@
         <div class="card-header">
             <div>
                 <h1 class="card-title">
-                    <i class="fas fa-edit"></i>
-                    Voedselpakket Wijzigen
+                    <i class="fas fa-plus"></i>
+                    Nieuw Voedselpakket Toevoegen
                 </h1>
                 <p class="card-subtitle">
-                    Wijzig voedselpakket informatie voor pakket #{{ $foodParcel->id }}
+                    Voeg een nieuw voedselpakket toe aan het systeem
                 </p>
             </div>
             <div class="btn-group">
-                <a href="{{ route('food-parcels.show', $foodParcel->id) }}" class="btn btn-info">
-                    <i class="fas fa-eye"></i>
-                    <span class="btn-text">Bekijk Details</span>
-                </a>
                 <a href="{{ route('food-parcels.index') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i>
                     <span class="btn-text">Terug naar Overzicht</span>
@@ -44,20 +40,11 @@
         </div>
     </div>
 
-    <!-- Edit Form -->
+    <!-- Create Form -->
     <div class="card">
         <div class="card-content">
-            @if($foodParcel->is_active)
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <strong>Let op:</strong> Dit voedselpakket is momenteel actief en in distributie.
-                    Alleen notities en status kunnen worden gewijzigd. Voor wijzigingen aan klant of voorraad moet u het pakket eerst deactiveren.
-                </div>
-            @endif
-
-            <form action="{{ route('food-parcels.update', $foodParcel->id) }}" method="POST" id="editFoodParcelForm" class="needs-validation" novalidate>
+            <form action="{{ route('food-parcels.store') }}" method="POST" id="createFoodParcelForm" class="needs-validation" novalidate>
                 @csrf
-                @method('PUT')
 
                 <div class="form-grid">
                     <!-- Customer Selection -->
@@ -69,7 +56,7 @@
                         <select name="customer_id" id="customer_id" class="form-control select2 @error('customer_id') is-invalid @enderror" required>
                             <option value="">Selecteer een klant...</option>
                             @foreach($customers as $customer)
-                                <option value="{{ $customer->id }}" {{ old('customer_id', $foodParcel->customer_id) == $customer->id ? 'selected' : '' }}>
+                                <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
                                     #{{ $customer->id }} - {{ $customer->name ?? $customer->email }}
                                 </option>
                             @endforeach
@@ -98,7 +85,7 @@
                                         data-product="{{ $stock->product_name }}"
                                         data-category="{{ $stock->category_name }}"
                                         data-received="{{ $stock->received_date ? \Carbon\Carbon::parse($stock->received_date)->format('d-m-Y') : 'N/A' }}"
-                                        {{ old('stock_id', $foodParcel->stock_id) == $stock->id ? 'selected' : '' }}>
+                                        {{ old('stock_id') == $stock->id ? 'selected' : '' }}>
                                     {{ $stock->display_name }}
                                 </option>
                             @endforeach
@@ -125,7 +112,7 @@
                             </div>
                             <div class="preview-item">
                                 <span class="preview-label">Ontvangen Datum:</span>
-                                <span id="previewExpiry" class="preview-value">-</span>
+                                <span id="previewReceived" class="preview-value">-</span>
                             </div>
                         </div>
                     </div>
@@ -141,7 +128,7 @@
                                 <input type="hidden" name="is_active" value="0">
                                 <input type="checkbox" name="is_active" id="is_active" value="1"
                                        class="form-switch-input @error('is_active') is-invalid @enderror"
-                                       {{ old('is_active', $foodParcel->is_active) ? 'checked' : '' }}>
+                                       {{ old('is_active', true) ? 'checked' : '' }}>
                                 <label for="is_active" class="form-switch-label">
                                     <span class="form-switch-button"></span>
                                     <span class="form-switch-text">
@@ -168,7 +155,7 @@
                         </label>
                         <textarea name="note" id="note" rows="4"
                                   class="form-control @error('note') is-invalid @enderror"
-                                  placeholder="Voeg eventuele aanvullende notities of opmerkingen over dit voedselpakket toe...">{{ old('note', $foodParcel->note) }}</textarea>
+                                  placeholder="Voeg eventuele aanvullende notities of opmerkingen over dit voedselpakket toe...">{{ old('note') }}</textarea>
                         @error('note')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -183,18 +170,13 @@
                 <div class="form-actions">
                     <button type="submit" class="btn btn-success btn-lg">
                         <i class="fas fa-save"></i>
-                        Voedselpakket Bijwerken
+                        Voedselpakket Toevoegen
                     </button>
 
-                    <button type="button" class="btn btn-warning btn-lg" onclick="resetForm()">
+                    <button type="reset" class="btn btn-warning btn-lg">
                         <i class="fas fa-undo"></i>
-                        Wijzigingen Terugzetten
+                        Formulier Leegmaken
                     </button>
-
-                    <a href="{{ route('food-parcels.show', $foodParcel->id) }}" class="btn btn-info btn-lg">
-                        <i class="fas fa-eye"></i>
-                        Bekijk Details
-                    </a>
 
                     <a href="{{ route('food-parcels.index') }}" class="btn btn-secondary btn-lg">
                         <i class="fas fa-times"></i>
@@ -207,71 +189,31 @@
 
     <!-- Information Cards -->
     <div class="info-grid">
-        <!-- Current Information Card -->
+        <!-- Instructions Card -->
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fas fa-info-circle"></i>
-                    Huidige Informatie
-                </h3>
-            </div>
-            <div class="card-content">
-                <div class="info-item">
-                    <span class="info-label">Pakket ID:</span>
-                    <span class="info-value">#{{ $foodParcel->id }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Aangemaakt:</span>
-                    <span class="info-value">{{ \Carbon\Carbon::parse($foodParcel->created_at)->format('d M Y') }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Laatst Bijgewerkt:</span>
-                    <span class="info-value">{{ \Carbon\Carbon::parse($foodParcel->updated_at)->diffForHumans() }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Huidige Status:</span>
-                    <span class="info-value">
-                        @if($foodParcel->is_active)
-                            <span class="status-badge status-active">
-                                <i class="fas fa-check-circle"></i>
-                                Actief
-                            </span>
-                        @else
-                            <span class="status-badge status-inactive">
-                                <i class="fas fa-times-circle"></i>
-                                Inactief
-                            </span>
-                        @endif
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Help Card -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-question-circle"></i>
-                    Hulp & Tips
+                    Instructies
                 </h3>
             </div>
             <div class="card-content">
                 <div class="help-item">
-                    <i class="fas fa-lightbulb"></i>
+                    <i class="fas fa-user"></i>
                     <div>
                         <strong>Klant Selectie:</strong>
                         <p>Kies de klant die dit voedselpakket zal ontvangen. Je kunt zoeken op naam of ID.</p>
                     </div>
                 </div>
                 <div class="help-item">
-                    <i class="fas fa-lightbulb"></i>
+                    <i class="fas fa-warehouse"></i>
                     <div>
                         <strong>Voorraad Beheer:</strong>
                         <p>Selecteer voorraad items die beschikbaar zijn en niet verlopen. Controleer het voorbeeld voor voorraad details.</p>
                     </div>
                 </div>
                 <div class="help-item">
-                    <i class="fas fa-lightbulb"></i>
+                    <i class="fas fa-toggle-on"></i>
                     <div>
                         <strong>Status Controle:</strong>
                         <p>Gebruik de schakelaar om het voedselpakket te activeren of deactiveren naar behoefte.</p>
@@ -279,12 +221,36 @@
                 </div>
             </div>
         </div>
+
+        <!-- Quick Stats Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Snelle Statistieken
+                </h3>
+            </div>
+            <div class="card-content">
+                <div class="info-item">
+                    <span class="info-label">Beschikbare Klanten:</span>
+                    <span class="info-value">{{ count($customers) }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Beschikbare Voorraad Items:</span>
+                    <span class="info-value">{{ count($stocks) }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Nieuwe Voedselpakket ID:</span>
+                    <span class="info-value">#{{ (App\Models\FoodParcel::max('id') ?? 0) + 1 }}</span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Custom Styles for Edit Form -->
+<!-- Custom Styles for Create Form -->
 <style>
-/* Form Grid Layout */
+/* Import styles from edit form */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -402,27 +368,6 @@
     display: none;
 }
 
-/* Status Badges */
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 500;
-}
-
-.status-active {
-    background: var(--success-light);
-    color: var(--success-color);
-}
-
-.status-inactive {
-    background: var(--danger-light);
-    color: var(--danger-color);
-}
-
 /* Form Actions */
 .form-actions {
     display: flex;
@@ -475,7 +420,7 @@
 }
 
 .help-item i {
-    color: var(--warning-color);
+    color: var(--primary-color);
     margin-top: 0.25rem;
     flex-shrink: 0;
 }
@@ -535,26 +480,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const stockSelect = document.getElementById('stock_id');
     const stockPreview = document.getElementById('stockPreview');
     const previewQuantity = document.getElementById('previewQuantity');
-    const previewExpiry = document.getElementById('previewExpiry');
-    const customerSelect = document.getElementById('customer_id');
-
-    // Check if food parcel is active and disable critical fields
-    const isActive = {{ $foodParcel->is_active ? 'true' : 'false' }};
-    if (isActive) {
-        customerSelect.disabled = true;
-        stockSelect.disabled = true;
-        customerSelect.style.backgroundColor = '#f8f9fa';
-        stockSelect.style.backgroundColor = '#f8f9fa';
-
-        // Add tooltip explanations
-        customerSelect.title = 'Klant kan niet worden gewijzigd terwijl het pakket actief is';
-        stockSelect.title = 'Voorraad kan niet worden gewijzigd terwijl het pakket actief is';
-    }
-
-    // Initialize with current selection
-    if (stockSelect.value) {
-        updateStockPreview();
-    }
+    const previewReceived = document.getElementById('previewReceived');
 
     /**
      * Update stock preview when selection changes
@@ -570,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const received = selectedOption.dataset.received || 'N/A';
 
             previewQuantity.textContent = quantity + ' ' + unit;
-            previewExpiry.textContent = received;
+            previewReceived.textContent = received;
 
             stockPreview.style.display = 'block';
         } else {
@@ -579,7 +505,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Form validation
-    const form = document.getElementById('editFoodParcelForm');
+    const form = document.getElementById('createFoodParcelForm');
     form.addEventListener('submit', function(event) {
         if (!form.checkValidity()) {
             event.preventDefault();
@@ -588,15 +514,6 @@ document.addEventListener('DOMContentLoaded', function() {
         form.classList.add('was-validated');
     });
 });
-
-/**
- * Reset form to original values
- */
-function resetForm() {
-    if (confirm('Weet u zeker dat u alle wijzigingen wilt terugzetten? Dit zal terugkeren naar de oorspronkelijke waarden.')) {
-        location.reload();
-    }
-}
 
 /**
  * Initialize Select2 for better dropdowns
