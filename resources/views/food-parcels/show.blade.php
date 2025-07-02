@@ -144,7 +144,13 @@
                         <label class="detail-label">Customer Email</label>
                         <div class="detail-value">
                             <i class="fas fa-envelope"></i>
-                            {{ $foodParcel->customer_email ?? 'N/A' }}
+                            @if($foodParcel->customer_email)
+                                <a href="mailto:{{ $foodParcel->customer_email }}" class="text-primary">
+                                    {{ $foodParcel->customer_email }}
+                                </a>
+                            @else
+                                <span class="text-muted">Geen email beschikbaar</span>
+                            @endif
                         </div>
                     </div>
 
@@ -152,7 +158,13 @@
                         <label class="detail-label">Customer Phone</label>
                         <div class="detail-value">
                             <i class="fas fa-phone"></i>
-                            {{ $foodParcel->customer_phone ?? 'N/A' }}
+                            @if($foodParcel->customer_phone)
+                                <a href="tel:{{ $foodParcel->customer_phone }}" class="text-primary">
+                                    {{ $foodParcel->customer_phone }}
+                                </a>
+                            @else
+                                <span class="text-muted">Geen telefoon beschikbaar</span>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -174,13 +186,15 @@
                         <div class="detail-value">#{{ $foodParcel->stock_id }}</div>
                     </div>
 
+                    @if($foodParcel->product_name && $foodParcel->product_name !== 'Onbekend Product')
                     <div class="detail-item">
                         <label class="detail-label">Product Name</label>
                         <div class="detail-value">
                             <i class="fas fa-box"></i>
-                            {{ $foodParcel->product_name ?? 'Onbekend Product' }}
+                            {{ $foodParcel->product_name }}
                         </div>
                     </div>
+                    @endif
 
                     <div class="detail-item">
                         <label class="detail-label">Category</label>
@@ -245,47 +259,6 @@
                     Terug naar Lijst
                 </a>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div id="deleteModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 class="modal-title">
-                <i class="fas fa-exclamation-triangle"></i>
-                Confirm Deletion
-            </h3>
-            <button type="button" class="modal-close" onclick="closeDeleteModal()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="modal-body">
-            <p>Are you sure you want to delete this food parcel?</p>
-            <p class="text-muted">
-                <strong>Food Parcel ID:</strong> #{{ $foodParcel->id }}<br>
-                <strong>Customer:</strong> {{ $foodParcel->customer_name ?? 'N/A' }}<br>
-                <strong>Stock:</strong> {{ $foodParcel->stock_name ?? 'N/A' }}
-            </p>
-            <p class="warning-text">
-                <i class="fas fa-exclamation-triangle"></i>
-                This action cannot be undone!
-            </p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">
-                <i class="fas fa-times"></i>
-                Cancel
-            </button>
-            <form id="deleteForm" method="POST" action="{{ route('food-parcels.destroy', $foodParcel->id) }}" style="display: inline;">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger">
-                    <i class="fas fa-trash"></i>
-                    Delete Food Parcel
-                </button>
-            </form>
         </div>
     </div>
 </div>
@@ -430,43 +403,34 @@
 }
 </style>
 
-<!-- JavaScript for Modal and Interactions -->
+<!-- JavaScript for Interactions -->
 <script>
 /**
- * Show delete confirmation modal
+ * Show delete confirmation popup
  * @param {number} id - Food parcel ID
  */
 function confirmDelete(id) {
-    const modal = document.getElementById('deleteModal');
-    modal.style.display = 'block';
+    const confirmed = confirm('Weet je zeker dat je dit voedselpakket wilt verwijderen?\n\n' +
+                              'Voedselpakket ID: #' + id + '\n\n' +
+                              'Deze actie kan niet ongedaan worden gemaakt!');
 
-    // Use a Blade-generated route with a placeholder, then replace in JS
-    const form = document.getElementById('deleteForm');
-    const routeTemplate = "{{ route('food-parcels.destroy', ['id' => 'FOODPARCEL_ID_PLACEHOLDER']) }}";
-    form.action = routeTemplate.replace('FOODPARCEL_ID_PLACEHOLDER', id);
-}
+    if (confirmed) {
+        // Create and submit form
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = "{{ route('food-parcels.destroy.post', ['id' => 'FOODPARCEL_ID_PLACEHOLDER']) }}".replace('FOODPARCEL_ID_PLACEHOLDER', id);
 
-/**
- * Close delete confirmation modal
- */
-function closeDeleteModal() {
-    const modal = document.getElementById('deleteModal');
-    modal.style.display = 'none';
-}
+        // Add CSRF token
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = '{{ csrf_token() }}';
+        form.appendChild(csrfToken);
 
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('deleteModal');
-    if (event.target === modal) {
-        closeDeleteModal();
+        // Add form to body and submit
+        document.body.appendChild(form);
+        form.submit();
     }
 }
-
-// Close modal with escape key
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        closeDeleteModal();
-    }
-});
 </script>
 @endsection
