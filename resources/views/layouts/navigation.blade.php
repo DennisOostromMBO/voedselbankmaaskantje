@@ -18,6 +18,15 @@
                     <x-nav-link :href="route('food-parcels.index')" :active="request()->routeIs('food-parcels.*')">
                         {{ __('Voedselpakketten') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('stocks.index')" :active="request()->routeIs('stocks.*')">
+                        {{ __('Voorraad') }}
+                    </x-nav-link>
+                    <x-nav-link href="/customers" :active="request()->is('customers*')">
+                        {{ __('Klanten') }}
+                    </x-nav-link>
+                    <x-nav-link href="/suppliers" :active="request()->is('suppliers*')">
+                        {{ __('Leveranciers') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -75,6 +84,15 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('food-parcels.index')" :active="request()->routeIs('food-parcels.*')">
                 {{ __('Voedselpakketten') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('stocks.index')" :active="request()->routeIs('stocks.*')">
+                {{ __('Voorraad') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="/customers" :active="request()->is('customers*')">
+                {{ __('Klanten') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="/suppliers" :active="request()->is('suppliers*')">
+                {{ __('Leveranciers') }}
             </x-responsive-nav-link>
         </div>
 

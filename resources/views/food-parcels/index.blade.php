@@ -169,7 +169,6 @@
         <div class="table-container">
             <form id="bulkActionsForm" method="POST">
                 @csrf
-                @method('DELETE')
 
                 <table class="table">
                     <thead>
@@ -298,23 +297,15 @@
                                         <i class="fas fa-edit"></i>
                                         Bewerken
                                     </a>
-                                    <form
-                                        action="{{ route('food-parcels.destroy', $parcel->id) }}"
-                                        method="POST"
-                                        style="display: inline;"
-                                        onsubmit="return confirm('Weet u zeker dat u dit voedselpakket wilt verwijderen?')"
+                                    <button
+                                        type="button"
+                                        class="btn btn-danger btn-sm"
+                                        title="Verwijder Pakket"
+                                        onclick="confirmDelete({{ $parcel->id }}, '{{ addslashes($parcel->customer_name ?? 'N/A') }}', {{ $parcel->is_active ? 'true' : 'false' }})"
                                     >
-                                        @csrf
-                                        @method('DELETE')
-                                        <button
-                                            type="submit"
-                                            class="btn btn-danger btn-sm"
-                                            title="Verwijder Pakket"
-                                        >
-                                            <i class="fas fa-trash"></i>
-                                            Verwijderen
-                                        </button>
-                                    </form>
+                                        <i class="fas fa-trash"></i>
+                                        Verwijderen
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -680,9 +671,51 @@ function bulkDelete() {
     form.submit();
 }
 
+/**
+ * Show delete confirmation popup for individual parcel
+ * @param {number} id - Food parcel ID
+ * @param {string} customerName - Customer name
+ * @param {boolean} isActive - Whether the parcel is active
+ */
+function confirmDelete(id, customerName, isActive) {
+    // Check if parcel is active and show appropriate message
+    if (isActive) {
+        alert('Dit voedselpakket kan niet worden verwijderd.\n\n' +
+              'Voedselpakket ID: #' + id + '\n' +
+              'Klant: ' + customerName + '\n\n' +
+              'Kan voedselpakket niet verwijderen: gekoppeld aan actieve uitgifte.');
+        return;
+    }
+
+    // Show confirmation dialog for inactive parcel
+    const confirmed = confirm('Weet je zeker dat je dit voedselpakket wilt verwijderen?\n\n' +
+                              'Voedselpakket ID: #' + id + '\n' +
+                              'Klant: ' + customerName + '\n\n' +
+                              'Deze actie kan niet ongedaan worden gemaakt!');
+
+    if (confirmed) {
+        // Create and submit form
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = "{{ route('food-parcels.destroy.post', ['id' => 'PARCEL_ID_PLACEHOLDER']) }}".replace('PARCEL_ID_PLACEHOLDER', id);
+
+        // Add CSRF token
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = '{{ csrf_token() }}';
+        form.appendChild(csrfToken);
+
+        // Add form to body and submit
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     updateBulkActions();
 });
 </script>
+
 @endsection
